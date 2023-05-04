@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <item android:title="Category 1">
+        <menu>
+            <item android:title="Item1" android:id="@+id/item1" style="@styles/MenuTextStyle"/>
+            <item android:title="Item2" android:id="@+id/item2" style="@styles/MenuTextStyle"/>
+            <item android:title="Item3" android:id="@+id/item3" style="@styles/MenuTextStyle"/>
+        </menu>
+    </item>
+    <item android:title="Category 2">
+        <menu>
+            <item android:title="Item11" android:id="@+id/item11" style="@styles/MenuTextStyle"/>
+            <item android:title="Item22" android:id="@+id/item22" style="@styles/MenuTextStyle"/>
+            <item android:title="Item33" android:id="@+id/item33" style="@styles/MenuTextStyle"/>
+        </menu>
+    </item>
+
+</menu>
