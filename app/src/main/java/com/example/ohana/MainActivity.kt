@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
+// test shit
 @Preview
 @Composable
 fun MainMenu() {
