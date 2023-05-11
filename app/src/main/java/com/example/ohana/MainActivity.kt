@@ -8,8 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -75,12 +77,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainMenu() {
     var isRunning by remember { mutableStateOf(false) }
+    var logs = listOf("2313", "dkfgdfg")
 
     Scaffold(
         containerColor = Color(red = 64, green = 61, blue = 57, alpha = 255),
         floatingActionButton = {
             if (!isRunning) {
-                RunButton({ isRunning = !isRunning })
+                RunButton({ logs = logs + "value"})
             }
             else {
                 StopButton({ isRunning = !isRunning })
@@ -92,7 +95,7 @@ fun MainMenu() {
         val scope = rememberCoroutineScope()
 
         RightMenu(scope, drawerState)
-
+        console(logs)
         Box(modifier = Modifier.padding(contentPadding), contentAlignment = Alignment.BottomEnd) {  }
     }
 
@@ -154,7 +157,6 @@ fun RightMenu(scope: CoroutineScope, drawerState: DrawerState) {
                 ) {
                     OpenMenuButton(scope, drawerState)
                 }
-                CreateBlock()
             }
         )
     }
@@ -192,6 +194,48 @@ fun OpenMenuButton(scope: CoroutineScope, drawerState: DrawerState) {
     }
 }
 
+@Composable
+fun console(logs: List<String>) {
+    Column (
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .background(Color(red = 74, green = 71, blue = 73, alpha = 255))
+        ) {
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .background(Color(red = 74, green = 71, blue = 68, alpha = 255))
+            ) {
+                    Text(
+                        "     console output",
+                        color = Color(red = 179, green = 179, blue = 179, alpha = 255)
+                    )
+            }
+            LazyColumn(
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                item {
+                    logs.forEach() {
+                        Text(
+                            "    >> " + it,
+                            color = Color(red = 179, green = 179, blue = 179, alpha = 255)
+                        )
+                    }
+                }
+            }
+
+        }
+    }
+}
 
 @Composable
 fun CreateBlock() {
