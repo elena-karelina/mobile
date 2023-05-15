@@ -29,6 +29,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -66,7 +67,6 @@ import kotlin.math.roundToInt
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             MainMenu()
         }
@@ -77,13 +77,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainMenu() {
     var isRunning by remember { mutableStateOf(false) }
-    var logs = listOf("2313", "dkfgdfg")
+    var logs = listOf("start")
 
     Scaffold(
         containerColor = Color(red = 64, green = 61, blue = 57, alpha = 255),
         floatingActionButton = {
             if (!isRunning) {
-                RunButton({ logs = logs + "value"})
+                RunButton({ isRunning = !isRunning})
             }
             else {
                 StopButton({ isRunning = !isRunning })
@@ -94,11 +94,14 @@ fun MainMenu() {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
-        RightMenu(scope, drawerState)
-        console(logs)
+        if (isRunning) {
+            Console(logs)
+        }
+        else {
+            RightMenu(scope, drawerState)
+        }
         Box(modifier = Modifier.padding(contentPadding), contentAlignment = Alignment.BottomEnd) {  }
     }
-
 }
 
 @Composable
@@ -195,10 +198,10 @@ fun OpenMenuButton(scope: CoroutineScope, drawerState: DrawerState) {
 }
 
 @Composable
-fun console(logs: List<String>) {
+fun Console(logs: List<String>) {
     Column (
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
     ) {
         Column (
@@ -232,27 +235,6 @@ fun console(logs: List<String>) {
                     }
                 }
             }
-
         }
     }
-}
-
-@Composable
-fun CreateBlock() {
-    var offsetX by remember { mutableStateOf(450f) }
-    var offsetY by remember { mutableStateOf(1100f) }
-
-    Box(
-        Modifier
-            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .background(Color.Red)
-            .size(50.dp)
-            .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
-                    change.consume()
-                    offsetX -= dragAmount.x // Маленький костыль, который вызван тем, что блок рисуется внутри content modelDrawer, который зеркально отражен, из-за этого += инвертировало движение по оси Ox
-                    offsetY += dragAmount.y
-                }
-            }
-    )
 }
