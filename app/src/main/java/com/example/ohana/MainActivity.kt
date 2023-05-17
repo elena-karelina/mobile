@@ -4,12 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,20 +34,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ohana.ui.theme.BlockHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -59,12 +54,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-// test shit
+
 @Preview
 @Composable
 fun MainMenu() {
+//    if blockHolder.ifEmpry {null}:
+
     var isRunning by remember { mutableStateOf(false) }
-    val holder = BlockHolder()
 
     Scaffold(
         containerColor = Color(red = 64, green = 61, blue = 57, alpha = 255),
@@ -82,10 +78,6 @@ fun MainMenu() {
 
         RightMenu(scope, drawerState)
 
-        holder.blocks.forEach {
-
-        }
-
         Box(modifier = Modifier.padding(contentPadding), contentAlignment = Alignment.BottomEnd) { }
     }
 
@@ -94,7 +86,7 @@ fun MainMenu() {
 @Composable
 fun RunButton(onClick: () -> Unit) {
     FloatingActionButton(
-        onClick = { onClick() },
+        onClick = {  },
         containerColor = Color(red = 42, green = 157, blue = 143, alpha = 255),
         shape = CircleShape
     ) {
@@ -121,6 +113,7 @@ fun StopButton(onClick: () -> Unit) {
 
 @Composable
 fun RightMenu(scope: CoroutineScope, drawerState: DrawerState) {
+    val holder = BlockHolder()
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
             scrimColor = Color.Transparent,
@@ -135,10 +128,11 @@ fun RightMenu(scope: CoroutineScope, drawerState: DrawerState) {
                     ),
                     modifier = Modifier.width(300.dp)
                 ) {
-                    MenuItem("Controllers", { CreateBlock() })
-                    MenuItem("Operators", { CreateBlock() })
-                    MenuItem("Variables", { CreateBlock() })
-                    MenuItem("Events", { CreateBlock() })
+                    MenuItem("Controllers", { holder.addBlock(Box(modifier = Modifier.size(40.dp, 20.dp))) })
+                    MenuItem("Operators", { holder.addBlock(Box(modifier = Modifier.size(40.dp, 20.dp))) })
+                    MenuItem("Variables", { holder.addBlock(Box(modifier = Modifier.size(40.dp, 20.dp))) })
+                    MenuItem("Events", { holder.addBlock(Box(modifier = Modifier.size(40.dp, 20.dp)))})
+                    println(holder)
                 }
             },
             content = {
@@ -147,7 +141,6 @@ fun RightMenu(scope: CoroutineScope, drawerState: DrawerState) {
                 ) {
                     OpenMenuButton(scope, drawerState)
                 }
-                CreateBlock()
             }
         )
     }
@@ -187,25 +180,4 @@ fun OpenMenuButton(scope: CoroutineScope, drawerState: DrawerState) {
             contentDescription = "Open menu button"
         )
     }
-}
-
-
-@Composable
-fun CreateBlock() {
-    var offsetX by remember { mutableStateOf(450f) }
-    var offsetY by remember { mutableStateOf(1100f) }
-
-    Box(
-        Modifier
-            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .background(Color.Red)
-            .size(50.dp)
-            .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
-                    change.consume()
-                    offsetX -= dragAmount.x // Маленький костыль, который вызван тем, что блок рисуется внутри content modelDrawer, который зеркально отражен, из-за этого += инвертировало движение по оси Ox
-                    offsetY += dragAmount.y
-                }
-            }
-    )
 }
