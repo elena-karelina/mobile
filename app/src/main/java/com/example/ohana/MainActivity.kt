@@ -7,16 +7,23 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,21 +55,28 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.consumePositionChange
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MainMenu()
+            NumberInputBlock()
+            NumberInputBlock()
 
         }
     }
@@ -98,82 +112,79 @@ fun MainMenu() {
 }
 
 @Composable
-fun RunButton(onClick: () -> Unit) {
-    FloatingActionButton(
-        onClick = { onClick() },
-        containerColor = Color(red = 42, green = 157, blue = 143, alpha = 255),
-        shape = CircleShape
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.run),
-            contentDescription = "Run button"
-        )
-    }
-}
-
-@Composable
-fun StopButton(onClick: () -> Unit) {
-    FloatingActionButton(
-        onClick = { onClick() },
-        containerColor = Color(red = 230, green = 57, blue = 70, alpha = 255),
-        shape = CircleShape
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.stop),
-            contentDescription = "Run button"
-        )
-    }
-}
-@Composable
 fun NumberInputBlock() {
     var value1 by remember { mutableStateOf("") }
     var value2 by remember { mutableStateOf("") }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+    var isDragging by remember { mutableStateOf(false) }
+
+
+    Box(
         modifier = Modifier
-            .wrapContentHeight()
-            .fillMaxWidth(0.5f)
-            .height(70.dp)
-            .padding(10.dp)
+            .wrapContentSize()
+            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = { isDragging = true },
+                    onDragEnd = { isDragging = false },
+                    onDrag = { change, dragAmount ->
+                        offsetX += dragAmount.x
+                        offsetY += dragAmount.y
+                        change.consumePositionChange()
+                    }
+                )
+            }
             .background(Color(0xFF2A9D8F), shape = RoundedCornerShape(8.dp))
+            .padding(10.dp)
+            .width(IntrinsicSize.Min)
     ) {
-
-        BasicTextField(
-            value = value1,
-            onValueChange = { value1 = it },
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .weight(1f)
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
-                .padding(vertical = 8.dp, horizontal = 10.dp)
-                .wrapContentHeight(),
-            singleLine = true,
-            maxLines = 1,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            keyboardActions = KeyboardActions(onDone = { /* Handle done action if needed */ })
-        )
+                //.fillMaxWidth(0.5f)
+                //.height(50.dp)
+        )  {
+
+            BasicTextField(
+                value = value1,
+                onValueChange = { value1 = it },
+                modifier = Modifier
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .padding(vertical = 8.dp, horizontal = 10.dp)
+                    .height(IntrinsicSize.Min)
+                    .width(IntrinsicSize.Min)
+                    .wrapContentHeight(),
+                singleLine = true,
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardActions = KeyboardActions(onDone = { /* Handle done action if needed */ })
+            )
 
 
-        Text(
-            text = "+",
-            modifier = Modifier.padding(horizontal = 4.dp),
-            color= Color.White,
-            fontSize = 30.sp
-        )
+            Text(
+                text = "+",
+                modifier = Modifier.padding(horizontal = 4.dp),
+                color = Color.White,
+                fontSize = 30.sp
+            )
 
-        BasicTextField(
-            value = value2,
-            onValueChange = { value2 = it },
-            modifier = Modifier
-                .weight(1f)
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
-                .padding(vertical = 8.dp, horizontal = 10.dp),
-
-            singleLine = true,
-            maxLines = 1,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            keyboardActions = KeyboardActions(onDone = { /* Handle done action if needed */ })
-        )
+            BasicTextField(
+                value = value2,
+                onValueChange = { value2 = it },
+                modifier = Modifier
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .padding(vertical = 8.dp, horizontal = 10.dp)
+                    .height(IntrinsicSize.Min)
+                    .width(IntrinsicSize.Min)
+                    .wrapContentHeight(),
+                singleLine = true,
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardActions = KeyboardActions(onDone = { /* Handle done action if needed */ })
+            )
+        }
     }
 }
 
@@ -186,13 +197,6 @@ fun RightMenu(scope: CoroutineScope, drawerState: DrawerState) {
     val isEventssDropdownOpen = remember { mutableStateOf(false) }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        var isClicked by remember {
-            mutableStateOf(false)
-        }
-        if (isClicked) {
-            NumberInputBlock()
-            isClicked = false
-        }
         ModalNavigationDrawer(
             scrimColor = Color.Transparent,
             drawerState = drawerState,
@@ -217,9 +221,8 @@ fun RightMenu(scope: CoroutineScope, drawerState: DrawerState) {
                         }
 
                         if (isControllersDropdownOpen.value) {
-                            item { MenuItem("1", onClick = {
-                                })
-                                isClicked = true
+                            item {
+                                MenuItem("1", onClick = {})
                             }
                             item { MenuItem("2", onClick = {}) }
                         }
@@ -305,6 +308,34 @@ fun MenuItem(
             text = text,
             fontSize = 20.sp,
             color = Color.White
+        )
+    }
+}
+
+@Composable
+fun RunButton(onClick: () -> Unit) {
+    FloatingActionButton(
+        onClick = { onClick() },
+        containerColor = Color(red = 42, green = 157, blue = 143, alpha = 255),
+        shape = CircleShape
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.run),
+            contentDescription = "Run button"
+        )
+    }
+}
+
+@Composable
+fun StopButton(onClick: () -> Unit) {
+    FloatingActionButton(
+        onClick = { onClick() },
+        containerColor = Color(red = 230, green = 57, blue = 70, alpha = 255),
+        shape = CircleShape
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.stop),
+            contentDescription = "Run button"
         )
     }
 }
