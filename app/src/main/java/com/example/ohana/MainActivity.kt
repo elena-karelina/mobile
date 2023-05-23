@@ -19,17 +19,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -39,34 +38,27 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -77,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -84,8 +77,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MainMenu()
-
-
 
         }
     }
@@ -96,6 +87,7 @@ class MainActivity : ComponentActivity() {
 fun MainMenu() {
     var isRunning by remember { mutableStateOf(false) }
     val logs = listOf("start")
+    val blocks = remember { mutableStateListOf<String>() }
 
     Scaffold(
         containerColor = Color(red = 64, green = 61, blue = 57, alpha = 255),
@@ -114,11 +106,21 @@ fun MainMenu() {
         if (isRunning) {
             Console(logs)
         } else {
-            RightMenu(scope, drawerState)
+            RightMenu(scope = scope,
+                drawerState = drawerState,
+                onMenuItemClick = { blockName -> blocks.add(blockName) },
+                onClearClick = { blocks.clear() })
         }
-        Box(modifier = Modifier.padding(contentPadding), contentAlignment = Alignment.BottomEnd) {
-            ValueInputBlock()
-            PrintBlock()
+        Box(modifier = Modifier.padding(contentPadding)) {
+            Column {
+                blocks.forEach { block ->
+                    when (block) {
+                        "print" -> PrintBlock()
+                        "input" -> InputBlock()
+                        "variable" -> ValueInputBlock()
+                    }
+                }
+            }
         }
     }
 }
@@ -126,27 +128,13 @@ fun MainMenu() {
 @Composable
 fun PrintBlock() {
     var value by remember { mutableStateOf("") }
-
     var minWidth by remember { mutableStateOf(10.dp) }
+    var isDraggingBlock by remember { mutableStateOf(false) }
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
-    var isDragging by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
-            .wrapContentSize()
-            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragStart = { isDragging = true },
-                    onDragEnd = { isDragging = false },
-                    onDrag = { change, dragAmount ->
-                        offsetX += dragAmount.x
-                        offsetY += dragAmount.y
-                        change.consumePositionChange()
-                    }
-                )
-            }
             .background(Color(0xFF8338EC), shape = RoundedCornerShape(8.dp))
             .padding(10.dp)
     ) {
@@ -160,20 +148,100 @@ fun PrintBlock() {
                 fontSize = 20.sp
             )
 
-            BasicTextField(
-                value = value,
-                onValueChange = { value = it },
+            Box(
                 modifier = Modifier
                     .background(Color.White, shape = RoundedCornerShape(8.dp))
                     .padding(vertical = 8.dp, horizontal = 10.dp)
                     .widthIn(min = minWidth)
                     .height(IntrinsicSize.Min)
                     .width(IntrinsicSize.Min)
-                    .wrapContentHeight(),
-                singleLine = true,
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                    .wrapContentHeight()
+                    .offset {
+                        IntOffset(
+                            offsetX.roundToInt(),
+                            offsetY.roundToInt()
+                        )
+                    }
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = { isDraggingBlock = true },
+                            onDragEnd = { isDraggingBlock = false },
+                            onDrag = { _, dragAmount ->
+                                offsetX += dragAmount.x
+                                offsetY += dragAmount.y
+                            }
+                        )
+                    }
+            ) {
+                BasicTextField(
+                    value = value,
+                    onValueChange = { value = it },
+                    modifier = Modifier.fillMaxSize(),
+                    singleLine = true,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                )
+            }
+        }
+    }
+}
+@Composable
+fun InputBlock() {
+    var value by remember { mutableStateOf("") }
+    var minWidth by remember { mutableStateOf(10.dp) }
+    var isDraggingBlock by remember { mutableStateOf(false) }
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+
+    Box(
+        modifier = Modifier
+            .background(Color(0xFF8338EC), shape = RoundedCornerShape(8.dp))
+            .padding(10.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "Input",
+                modifier = Modifier.padding(horizontal = 4.dp),
+                color = Color.White,
+                fontSize = 20.sp
             )
+
+            Box(
+                modifier = Modifier
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .padding(vertical = 8.dp, horizontal = 10.dp)
+                    .widthIn(min = minWidth)
+                    .height(IntrinsicSize.Min)
+                    .width(IntrinsicSize.Min)
+                    .wrapContentHeight()
+                    .offset {
+                        IntOffset(
+                            offsetX.roundToInt(),
+                            offsetY.roundToInt()
+                        )
+                    }
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = { isDraggingBlock = true },
+                            onDragEnd = { isDraggingBlock = false },
+                            onDrag = { _, dragAmount ->
+                                offsetX += dragAmount.x
+                                offsetY += dragAmount.y
+                            }
+                        )
+                    }
+            ) {
+                BasicTextField(
+                    value = value,
+                    onValueChange = { value = it },
+                    modifier = Modifier.fillMaxSize(),
+                    singleLine = true,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                )
+            }
         }
     }
 }
@@ -181,11 +249,10 @@ fun PrintBlock() {
 fun ValueInputBlock() {
     var value1 by remember { mutableStateOf("") }
     var value2 by remember { mutableStateOf("") }
-
     var minWidth by remember { mutableStateOf(10.dp) }
+    var isDragging by remember { mutableStateOf(false) }
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
-    var isDragging by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -195,10 +262,9 @@ fun ValueInputBlock() {
                 detectDragGestures(
                     onDragStart = { isDragging = true },
                     onDragEnd = { isDragging = false },
-                    onDrag = { change, dragAmount ->
+                    onDrag = { _, dragAmount ->
                         offsetX += dragAmount.x
                         offsetY += dragAmount.y
-                        change.consumePositionChange()
                     }
                 )
             }
@@ -219,7 +285,17 @@ fun ValueInputBlock() {
                     .height(IntrinsicSize.Min)
                     .width(IntrinsicSize.Min)
                     .widthIn(min = minWidth)
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = { isDragging = true },
+                            onDragEnd = { isDragging = false },
+                            onDrag = { _, dragAmount ->
+                                offsetX += dragAmount.x
+                                offsetY += dragAmount.y
+                            }
+                        )
+                    },
                 singleLine = true,
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(
@@ -246,7 +322,17 @@ fun ValueInputBlock() {
                     .widthIn(min = minWidth)
                     .height(IntrinsicSize.Min)
                     .width(IntrinsicSize.Min)
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = { isDragging = true },
+                            onDragEnd = { isDragging = false },
+                            onDrag = { _, dragAmount ->
+                                offsetX += dragAmount.x
+                                offsetY += dragAmount.y
+                            }
+                        )
+                    },
                 singleLine = true,
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -254,13 +340,17 @@ fun ValueInputBlock() {
         }
     }
 }
+
 @Composable
-fun RightMenu(scope: CoroutineScope, drawerState: DrawerState) {
+fun RightMenu(scope: CoroutineScope,
+              drawerState: DrawerState,
+              onMenuItemClick: (String) -> Unit,
+              onClearClick: () -> Unit)
+{
     val isControllersDropdownOpen = remember { mutableStateOf(false) }
-    val isOperatorsDropdownOpen = remember { mutableStateOf(false) }
+    val isStreamsDropdownOpen = remember { mutableStateOf(false) }
     val isVariablesDropdownOpen = remember { mutableStateOf(false) }
-    val isEventsDropdownOpen = remember { mutableStateOf(false) }
-    val isEventssDropdownOpen = remember { mutableStateOf(false) }
+
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
@@ -279,7 +369,7 @@ fun RightMenu(scope: CoroutineScope, drawerState: DrawerState) {
                     ) {
                         item {
                             MenuItem(
-                                text = "Controllers",
+                                text = "CONTROLLERS",
                                 onClick = { isControllersDropdownOpen.value = !isControllersDropdownOpen.value },
                                 menuItemBackgroundColor = if (isControllersDropdownOpen.value) Color(0xFF4F4C49) else Color.Transparent,
                                 isNested = false
@@ -287,59 +377,35 @@ fun RightMenu(scope: CoroutineScope, drawerState: DrawerState) {
                         }
 
                         if (isControllersDropdownOpen.value) {
-                            item {
-                                MenuItem("1", onClick = {})
-                            }
-                            item { MenuItem("2", onClick = {}) }
+                            item { MenuItem(text = "if", onClick = {}) }
+                            item { MenuItem(text = "if-else", onClick = {}) }
+                            item { MenuItem(text = "while", onClick = {}) }
+                            item { MenuItem(text = "repeat", onClick = {}) }
                         }
                         item {
                             MenuItem(
-                                text = "Operators",
-                                onClick = { isOperatorsDropdownOpen.value = !isOperatorsDropdownOpen.value },
-                                menuItemBackgroundColor = if (isOperatorsDropdownOpen.value) Color(0xFF4F4C49) else Color.Transparent,
+                                text = "STREAMS",
+                                onClick = { isStreamsDropdownOpen.value = !isStreamsDropdownOpen.value },
+                                menuItemBackgroundColor = if (isStreamsDropdownOpen.value) Color(0xFF4F4C49) else Color.Transparent,
                                 isNested = false
                             )
                         }
-                        if (isOperatorsDropdownOpen.value) {
-                            item { MenuItem("1", onClick = {}) }
-                            item { MenuItem("2", onClick = {}) }
+                        if (isStreamsDropdownOpen.value) {
+                            item { MenuItem(text = "print", onClick = {onMenuItemClick ("print")}) }
+                            item { MenuItem(text = "input", onClick = {onMenuItemClick ("input")}) }
                         }
                         item {
                             MenuItem(
-                                text = "Variables",
+                                text = "VARIABLES",
                                 onClick = { isVariablesDropdownOpen.value = !isVariablesDropdownOpen.value },
                                 menuItemBackgroundColor = if (isVariablesDropdownOpen.value) Color(0xFF4F4C49) else Color.Transparent,
                                 isNested = false
                             )
                         }
                         if (isVariablesDropdownOpen.value) {
-                            item { MenuItem("1", onClick = {}) }
-                            item { MenuItem("2", onClick = {}) }
+                            item { MenuItem(text = "set variable", onClick = {onMenuItemClick("variable")}) }
                         }
-                        item {
-                            MenuItem(
-                                text = "Events",
-                                onClick = { isEventsDropdownOpen.value = !isEventsDropdownOpen.value },
-                                menuItemBackgroundColor = if (isEventsDropdownOpen.value) Color(0xFF4F4C49) else Color.Transparent,
-                                isNested = false
-                            )
-                        }
-                        if (isEventsDropdownOpen.value) {
-                            item { MenuItem("1", onClick = {}) }
-                            item { MenuItem("2", onClick = {}) }
-                        }
-                        item {
-                            MenuItem(
-                                text = "Eventss",
-                                onClick = { isEventssDropdownOpen.value = !isEventssDropdownOpen.value },
-                                menuItemBackgroundColor = if (isEventssDropdownOpen.value) Color(0xFF4F4C49) else Color.Transparent,
-                                isNested = false
-                            )
-                        }
-                        if (isEventssDropdownOpen.value) {
-                            item { MenuItem("1", onClick = {}) }
-                            item { MenuItem("2", onClick = {}) }
-                        }
+                        item {MenuItem(text = "CLEAR", onClick = {onClearClick()})}
                     }
                 }
             },
