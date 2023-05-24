@@ -111,6 +111,7 @@ fun MainMenu() {
                 onMenuItemClick = { blockName -> blocks.add(blockName) },
                 onClearClick = { blocks.clear() })
         }
+
         Box(modifier = Modifier.padding(contentPadding)) {
             Column {
                 blocks.forEach { block ->
@@ -121,6 +122,7 @@ fun MainMenu() {
                     }
                 }
             }
+
         }
     }
 }
