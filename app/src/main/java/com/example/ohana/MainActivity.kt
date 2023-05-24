@@ -24,6 +24,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -41,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -66,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -108,9 +112,8 @@ fun MainMenu() {
                 onClearClick = { blocks.clear() })
         }
 
-        Column(modifier = Modifier
-            .padding(contentPadding)) {
-
+        Box(modifier = Modifier.padding(contentPadding)) {
+            Column {
                 blocks.forEach { block ->
                     when (block) {
                         "print" -> PrintBlock()
@@ -118,6 +121,8 @@ fun MainMenu() {
                         "variable" -> ValueInputBlock()
                     }
                 }
+            }
+
         }
     }
 }
