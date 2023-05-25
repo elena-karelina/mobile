@@ -7,9 +7,14 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -23,6 +28,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -69,7 +75,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
+import org.burnoutcrew.reorderable.reorderable
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -77,7 +88,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MainMenu()
-
         }
     }
 }
@@ -103,27 +113,16 @@ fun MainMenu() {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
-        if (isRunning) {
-            Console(logs)
-        } else {
-            RightMenu(scope = scope,
-                drawerState = drawerState,
-                onMenuItemClick = { blockName -> blocks.add(blockName) },
-                onClearClick = { blocks.clear() })
-        }
         Box(modifier = Modifier.padding(contentPadding)) {
-            Column {
-                blocks.forEach { block ->
-                    when (block) {
-                        "print" -> PrintBlock()
-                        "input" -> InputBlock()
-                        "variable" -> ValueInputBlock()
-                    }
-                }
+            RightMenu(scope = scope, drawerState = drawerState, blocks = blocks)
+
+            if (isRunning) {
+                Console(logs)
             }
         }
     }
 }
+
 
 @Composable
 fun PrintBlock() {
@@ -134,57 +133,63 @@ fun PrintBlock() {
     var offsetY by remember { mutableStateOf(0f) }
 
     Box(
-        modifier = Modifier
-            .background(Color(0xFF8338EC), shape = RoundedCornerShape(8.dp))
-            .padding(10.dp)
+//        modifier = Modifier
+//            .offset {
+//                IntOffset(
+//                    offsetX.roundToInt(),
+//                    offsetY.roundToInt()
+//                )
+//            }
+//            .pointerInput(Unit) {
+//                detectDragGestures(
+//                    onDragStart = { isDraggingBlock = true },
+//                    onDragEnd = { isDraggingBlock = false },
+//                    onDrag = { _, dragAmount ->
+//                        offsetX += dragAmount.x
+//                        offsetY += dragAmount.y
+//                    }
+//                )
+//            }
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
+            modifier = Modifier
+                .background(Color(0xFF8338EC), shape = RoundedCornerShape(8.dp))
+                .padding(10.dp)
         ) {
-            Text(
-                text = "Print",
-                modifier = Modifier.padding(horizontal = 4.dp),
-                color = Color.White,
-                fontSize = 20.sp
-            )
-
-            Box(
-                modifier = Modifier
-                    .background(Color.White, shape = RoundedCornerShape(8.dp))
-                    .padding(vertical = 8.dp, horizontal = 10.dp)
-                    .widthIn(min = minWidth)
-                    .height(IntrinsicSize.Min)
-                    .width(IntrinsicSize.Min)
-                    .wrapContentHeight()
-                    .offset {
-                        IntOffset(
-                            offsetX.roundToInt(),
-                            offsetY.roundToInt()
-                        )
-                    }
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = { isDraggingBlock = true },
-                            onDragEnd = { isDraggingBlock = false },
-                            onDrag = { _, dragAmount ->
-                                offsetX += dragAmount.x
-                                offsetY += dragAmount.y
-                            }
-                        )
-                    }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                BasicTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    modifier = Modifier.fillMaxSize(),
-                    singleLine = true,
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                Text(
+                    text = "Print",
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    color = Color.White,
+                    fontSize = 20.sp
                 )
+
+                Box(
+                    modifier = Modifier
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
+                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                        .widthIn(min = minWidth)
+                        .height(IntrinsicSize.Min)
+                        .width(IntrinsicSize.Min)
+                        .wrapContentHeight()
+
+                ) {
+                    BasicTextField(
+                        value = value,
+                        onValueChange = { value = it },
+                        modifier = Modifier.fillMaxSize(),
+                        singleLine = true,
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                    )
+                }
             }
         }
     }
 }
+
 @Composable
 fun InputBlock() {
     var value by remember { mutableStateOf("") }
@@ -342,83 +347,169 @@ fun ValueInputBlock() {
 }
 
 @Composable
-fun RightMenu(scope: CoroutineScope,
-              drawerState: DrawerState,
-              onMenuItemClick: (String) -> Unit,
-              onClearClick: () -> Unit)
-{
+fun RightMenu(
+    scope: CoroutineScope,
+    drawerState: DrawerState,
+    blocks: MutableList<String>
+) {
     val isControllersDropdownOpen = remember { mutableStateOf(false) }
     val isStreamsDropdownOpen = remember { mutableStateOf(false) }
     val isVariablesDropdownOpen = remember { mutableStateOf(false) }
 
 
+    // Установка обратного направления чтения для drawerContent
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
             scrimColor = Color.Transparent,
             drawerState = drawerState,
             drawerContent = {
-                ModalDrawerSheet(
-                    drawerContainerColor = Color(0xFF4A4744),
-                    modifier = Modifier.fillMaxWidth(0.6f)
-                ) {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.Top,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp, bottom = 16.dp)
+                // Установка обычного направления чтения для контента drawerContent
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    ModalDrawerSheet(
+                        drawerContainerColor = Color(0xFF4A4744),
+                        modifier = Modifier.fillMaxWidth(0.6f)
                     ) {
-                        item {
-                            MenuItem(
-                                text = "CONTROLLERS",
-                                onClick = { isControllersDropdownOpen.value = !isControllersDropdownOpen.value },
-                                menuItemBackgroundColor = if (isControllersDropdownOpen.value) Color(0xFF4F4C49) else Color.Transparent,
-                                isNested = false
-                            )
-                        }
+                        LazyColumn(
+                            verticalArrangement = Arrangement.Top,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp, bottom = 16.dp)
+                        ) {
+                            item {
+                                MenuItem(
+                                    text = "CONTROLLERS",
+                                    onClick = {
+                                        isControllersDropdownOpen.value =
+                                            !isControllersDropdownOpen.value
+                                    },
+                                    menuItemBackgroundColor = if (isControllersDropdownOpen.value) Color(
+                                        0xFF4F4C49
+                                    ) else Color.Transparent,
+                                    isNested = false
+                                )
+                            }
 
-                        if (isControllersDropdownOpen.value) {
-                            item { MenuItem(text = "if", onClick = {}) }
-                            item { MenuItem(text = "if-else", onClick = {}) }
-                            item { MenuItem(text = "while", onClick = {}) }
-                            item { MenuItem(text = "repeat", onClick = {}) }
+                            if (isControllersDropdownOpen.value) {
+                                item { MenuItem(text = "if", onClick = {}) }
+                                item { MenuItem(text = "if-else", onClick = {}) }
+                                item { MenuItem(text = "while", onClick = {}) }
+                                item { MenuItem(text = "repeat", onClick = {}) }
+                            }
+                            item {
+                                MenuItem(
+                                    text = "STREAMS",
+                                    onClick = {
+                                        isStreamsDropdownOpen.value = !isStreamsDropdownOpen.value
+                                    },
+                                    menuItemBackgroundColor = if (isStreamsDropdownOpen.value) Color(
+                                        0xFF4F4C49
+                                    ) else Color.Transparent,
+                                    isNested = false
+                                )
+                            }
+                            if (isStreamsDropdownOpen.value) {
+                                item {
+                                    MenuItem(
+                                        text = "print",
+                                        onClick = { blocks.add("print") })
+                                }
+                                item {
+                                    MenuItem(
+                                        text = "input",
+                                        onClick = { blocks.add("input") })
+                                }
+                            }
+                            item {
+                                MenuItem(
+                                    text = "VARIABLES",
+                                    onClick = {
+                                        isVariablesDropdownOpen.value =
+                                            !isVariablesDropdownOpen.value
+                                    },
+                                    menuItemBackgroundColor = if (isVariablesDropdownOpen.value) Color(
+                                        0xFF4F4C49
+                                    ) else Color.Transparent,
+                                    isNested = false
+                                )
+                            }
+                            if (isVariablesDropdownOpen.value) {
+                                item {
+                                    MenuItem(
+                                        text = "set variable",
+                                        onClick = { blocks.add("variable") })
+                                }
+                            }
+                            item { MenuItem(text = "CLEAR", onClick = { blocks.clear() }) }
                         }
-                        item {
-                            MenuItem(
-                                text = "STREAMS",
-                                onClick = { isStreamsDropdownOpen.value = !isStreamsDropdownOpen.value },
-                                menuItemBackgroundColor = if (isStreamsDropdownOpen.value) Color(0xFF4F4C49) else Color.Transparent,
-                                isNested = false
-                            )
-                        }
-                        if (isStreamsDropdownOpen.value) {
-                            item { MenuItem(text = "print", onClick = {onMenuItemClick ("print")}) }
-                            item { MenuItem(text = "input", onClick = {onMenuItemClick ("input")}) }
-                        }
-                        item {
-                            MenuItem(
-                                text = "VARIABLES",
-                                onClick = { isVariablesDropdownOpen.value = !isVariablesDropdownOpen.value },
-                                menuItemBackgroundColor = if (isVariablesDropdownOpen.value) Color(0xFF4F4C49) else Color.Transparent,
-                                isNested = false
-                            )
-                        }
-                        if (isVariablesDropdownOpen.value) {
-                            item { MenuItem(text = "set variable", onClick = {onMenuItemClick("variable")}) }
-                        }
-                        item {MenuItem(text = "CLEAR", onClick = {onClearClick()})}
                     }
                 }
             },
             content = {
-                Column(
-                    horizontalAlignment = Alignment.Start
-                ) {
+                // Установка обычного направления чтения для content
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+
+                    MyList(blocks = blocks) { newBlocks ->
+                        blocks.clear()
+                        blocks.addAll(newBlocks)
+                    }
                     OpenMenuButton(scope, drawerState)
                 }
             }
         )
     }
 }
+
+@Composable
+fun MyList(blocks: List<String>, onBlocksUpdate: (List<String>) -> Unit) {
+    val state = rememberLazyListState()
+    LazyColumn(state = state,
+            modifier = Modifier.fillMaxSize(1f)) {
+        itemsIndexed(blocks) { index, block ->
+            var isDragging by remember { mutableStateOf(false) }
+
+            if (isDragging) {
+                Box(Modifier.graphicsLayer { /* apply transformations and effects */ })
+            }
+
+            val modifier = Modifier
+                .draggable(
+                    state = rememberDraggableState { delta ->
+                        isDragging = true
+                    },
+                    orientation = Orientation.Vertical,
+                    onDragStopped = {
+                        isDragging = false
+                    }
+                )
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = { /* handle tap */ },
+                        onLongPress = { isDragging = true }
+                    )
+                }
+
+            when (block) {
+                "print" -> PrintBlock()
+                "input" -> InputBlock()
+                "variable" -> ValueInputBlock()
+            }
+
+            if (isDragging) {
+                val newIndex = state.layoutInfo.visibleItemsInfo
+                    .indexOfFirst { it.index != -1 && it.offset <= state.layoutInfo.viewportEndOffset }
+                    .takeIf { it != -1 } ?: return@itemsIndexed
+
+                if (newIndex != index) {
+                    val newBlocks = blocks.toMutableList()
+                    newBlocks.removeAt(index)
+                    newBlocks.add(newIndex, block)
+                    onBlocksUpdate(newBlocks)
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun MenuItem(
@@ -483,7 +574,9 @@ fun OpenMenuButton(scope: CoroutineScope, drawerState: DrawerState) {
             disabledContentColor = Color.Transparent
         ),
         modifier = Modifier
+            .wrapContentWidth()
             .fillMaxHeight(),
+
         shape = RectangleShape
 
     ) {
@@ -494,23 +587,13 @@ fun OpenMenuButton(scope: CoroutineScope, drawerState: DrawerState) {
     }
 }
 
-@Composable
-fun MyCanvas() {
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        drawCircle(
-            color = Color.Blue,
-            radius = 100f,
-            center = Offset(size.width / 2, size.height / 2),
-            style = Stroke(width = 4f)
-        )
-    }
-}
 
 
 @Composable
 fun Console(logs: List<String>) {
     Column(
         modifier = Modifier
+            .background(Color.Transparent)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
     ) {
