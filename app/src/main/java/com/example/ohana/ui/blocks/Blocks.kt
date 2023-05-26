@@ -35,9 +35,11 @@ import androidx.compose.ui.unit.sp
 import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetArrBlock
-
 import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.logic.WhileBlock
+import com.example.ohana.ui.theme.ifBlockBackground
+import com.example.ohana.ui.theme.printBlockBackground
+import com.example.ohana.ui.theme.variableBlockBackground
 
 
 @Composable
@@ -46,7 +48,7 @@ fun PrintBlock(block: PrintBlock, distance: Dp) {
     val minWidth by remember { mutableStateOf(10.dp) }
     Box(modifier = Modifier.padding(start=distance)){
         Box(modifier = Modifier
-            .background(Color(0xFF8338EC), RoundedCornerShape(8.dp))
+            .background(printBlockBackground, RoundedCornerShape(8.dp))
             .padding(12.dp)
         ) {
             Row(
@@ -267,7 +269,7 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
         Box(
             modifier = Modifier
                 .wrapContentSize()
-                .background(Color(0xFF2A9D8F), shape = RoundedCornerShape(8.dp))
+                .background(ifBlockBackground, shape = RoundedCornerShape(8.dp))
                 .padding(10.dp)
         ) {
             Row(
@@ -348,7 +350,7 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
         Box(
             modifier = Modifier
                 .wrapContentSize()
-                .background(Color(0xFF2A9D8F), shape = RoundedCornerShape(8.dp))
+                .background(variableBlockBackground, shape = RoundedCornerShape(8.dp))
                 .padding(8.dp)
         ) {
             Row(
