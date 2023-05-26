@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.PrintBlock
+import com.example.ohana.logic.SetArrBlock
 
 import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.logic.WhileBlock
@@ -126,19 +127,18 @@ fun PrintBlock(block: PrintBlock, distance: Dp) {
 //    }
 //}
 @Composable
-fun EndIfBlock(distance: Dp){
+fun EndBlock(distance: Dp){
     Box(
         modifier = Modifier.padding(start = distance)){
         Box(
             modifier = Modifier
                 .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
-                .padding(horizontal = 10.dp, vertical = 5.dp)
+                .padding(horizontal = 24.dp, vertical = 5.dp)
         ){
             Text(
-                text = "end of if block",
-                modifier = Modifier.padding(horizontal = 4.dp),
+                text = "end of block",
                 color = Color.White,
-                fontSize = 10.sp
+                fontSize = 8.sp
             )
         }
     }
@@ -191,25 +191,7 @@ fun IfBlock(block: IfBlock, distance: Dp) {
         }
     }
 }
-@Composable
-fun EndWhileBlock(distance: Dp){
-    Box(
-        modifier = Modifier.padding(start = distance)){
-        Box(
-            modifier = Modifier
-                .background(Color(0xFFa35541), shape = RoundedCornerShape(8.dp))
-                .padding(horizontal = 10.dp, vertical = 5.dp)
-        ){
-            Text(
-                text = "end of while block",
-                modifier = Modifier.padding(horizontal = 4.dp),
-                color = Color.White,
-                fontSize = 10.sp
-            )
-        }
-    }
 
-}
 @Composable
 fun WhileBlock(block: WhileBlock, distance: Dp) {
     var value by remember(block.value1) { mutableStateOf(block.value1) }
@@ -218,7 +200,7 @@ fun WhileBlock(block: WhileBlock, distance: Dp) {
         modifier = Modifier.padding(start = distance)){
         Box(
             modifier = Modifier
-                .background(Color(0xFFa35541), shape = RoundedCornerShape(8.dp))
+                .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
                 .padding(12.dp)
         ) {
             Row(
@@ -309,6 +291,81 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
                     onValueChange = {
                         value2 = it
                         block.value = value2
+                        block.value2 = value2
+                    },
+                    modifier = Modifier
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
+                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                        .widthIn(min = minWidth)
+                        .height(IntrinsicSize.Min)
+                        .width(IntrinsicSize.Min)
+                        .wrapContentHeight(),
+                    singleLine = true,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                )
+            }
+        }
+    }
+
+}
+@Composable
+fun SetArrBlock(block: SetArrBlock, distance: Dp) {
+    var value1 by remember(block.value1) { mutableStateOf(block.value1) }
+    var value2 by remember(block.value2) { mutableStateOf(block.value2) }
+    val minWidth by remember { mutableStateOf(10.dp) }
+    Box(
+        modifier = Modifier.padding(start = distance)){
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .background(Color(0xFF2A9D8F), shape = RoundedCornerShape(8.dp))
+                .padding(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "arr",
+                    color = Color.White,
+                    fontSize = 20.sp ,
+                    modifier = Modifier.padding( end = 8.dp),
+                )
+                BasicTextField(
+                    value = value1,
+                    onValueChange = { newValue ->
+                        value1 = newValue.replace(Regex("[^a-z]"), "")
+                        block.name = value1
+                        block.value1 = value1
+                    },
+                    modifier = Modifier
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
+                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                        .height(IntrinsicSize.Min)
+                        .width(IntrinsicSize.Min)
+                        .widthIn(min = minWidth)
+                        .wrapContentHeight(),
+                    singleLine = true,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    visualTransformation = VisualTransformation.None
+                )
+
+                Text(
+                    text = "size:",
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
+
+                BasicTextField(
+                    value = value2,
+                    onValueChange = {
+                        value2 = it
+                        block.size = value2
                         block.value2 = value2
                     },
                     modifier = Modifier

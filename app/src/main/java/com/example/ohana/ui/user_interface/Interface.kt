@@ -30,11 +30,10 @@ import com.example.ohana.BlocksDrawer
 import com.example.ohana.logic.Block
 import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.PrintBlock
+import com.example.ohana.logic.SetArrBlock
 import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.logic.WhileBlock
-import com.example.ohana.logic.endIfBlock
-import com.example.ohana.logic.endWhileBlock
-import com.example.ohana.ui.blocks.EndIfBlock
+import com.example.ohana.logic.endBlock
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -47,14 +46,11 @@ fun RightMenu(
     val isStreamsDropdownOpen = remember { mutableStateOf(false) }
     val isVariablesDropdownOpen = remember { mutableStateOf(false) }
 
-
-    // Установка обратного направления чтения для drawerContent
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
             scrimColor = Color.Transparent,
             drawerState = drawerState,
             drawerContent = {
-                // Установка обычного направления чтения для контента drawerContent
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     ModalDrawerSheet(
                         drawerContainerColor = Color(0xFF4A4744),
@@ -81,9 +77,10 @@ fun RightMenu(
                             }
 
                             if (isControllersDropdownOpen.value) {
-                                item { MenuItem(text = "    if", onClick = { blocks.add(IfBlock("")); blocks.add(endIfBlock()) }) }
-                                item { MenuItem(text = "    while", onClick = {blocks.add(WhileBlock("")); blocks.add(endWhileBlock()) })  }
-                                item { MenuItem(text = "    repeat", onClick = {}) }
+                                item { MenuItem(text = "    if", onClick = { blocks.add(IfBlock("")); blocks.add(endBlock()) }) }
+                                item { MenuItem(text = "    while", onClick = {blocks.add(WhileBlock("")); blocks.add(
+                                    endBlock()
+                                ) })  }
                             }
                             item {
                                 MenuItem(
@@ -128,6 +125,11 @@ fun RightMenu(
                                         text = "    Set variable",
                                         onClick = { blocks.add(SetVariableBlock("", "")) })
                                 }
+                                item {
+                                    MenuItem(
+                                        text = "    Set array",
+                                        onClick = { blocks.add(SetArrBlock("", "")) })
+                                }
                             }
                             item { MenuItem(text = "Clear", onClick = { blocks.clear() }) }
                         }
@@ -135,12 +137,8 @@ fun RightMenu(
                 }
             },
             content = {
-                // Установка обычного направления чтения для content
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-
-                    // TODO вставить отрисовку блоков сюда
                     BlocksDrawer(blocks)
-
                     OpenMenuButton(scope, drawerState)
                 }
             }

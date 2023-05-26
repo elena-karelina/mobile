@@ -48,9 +48,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import com.example.ohana.logic.IfBlock
+import com.example.ohana.logic.SetArrBlock
 import com.example.ohana.logic.WhileBlock
-import com.example.ohana.logic.endIfBlock
-import com.example.ohana.logic.endWhileBlock
+import com.example.ohana.logic.endBlock
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -104,7 +104,6 @@ fun MainMenu() {
 }
 
 
-// Отрисовка всех блоков
 @Composable
 fun BlocksDrawer(blocks: MutableList<Block>) {
     var distance = 0.dp
@@ -138,15 +137,13 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
                             IfBlock(block = block, distance)
                             distance += 20.dp
                         }
-                        is endIfBlock -> {
+                        is endBlock -> {
                             distance -= 20.dp
-                            EndIfBlock(distance)
+                            EndBlock(distance)
                         }
-                        is endWhileBlock -> {
-                            distance -= 20.dp
-                            EndWhileBlock(distance)
-                        }
+
                         is SetVariableBlock -> SetVariableBlock(block = block, distance)
+                        is SetArrBlock -> SetArrBlock(block = block, distance)
                     }
                 }
             }

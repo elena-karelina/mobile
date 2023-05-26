@@ -23,14 +23,14 @@ class SetVariableBlock(var name: String, var value: String): Block() {
     }
 }
 
+class SetArrBlock(var name: String, var size: String): Block() {
+}
 class PrintBlock(var log: String): Block() {
     override fun execute(scope: Scope) {
         scope.setLog(solveMathExpression(scope, log).toString())
     }
 }
-class endIfBlock(): Block(){
-}
-class endWhileBlock(): Block(){
+class endBlock(): Block(){
 }
 
 class IfBlock(var condition: String): Block() {
