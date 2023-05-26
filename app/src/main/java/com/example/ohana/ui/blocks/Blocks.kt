@@ -1,7 +1,6 @@
 package com.example.ohana.ui.blocks
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -37,6 +36,7 @@ import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetArrBlock
 import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.logic.WhileBlock
+import com.example.ohana.ui.theme.TextInBlock
 import com.example.ohana.ui.theme.ifBlockBackground
 import com.example.ohana.ui.theme.printBlockBackground
 import com.example.ohana.ui.theme.variableBlockBackground
@@ -137,7 +137,7 @@ fun EndBlock(distance: Dp){
         modifier = Modifier.padding(start = distance)){
         Box(
             modifier = Modifier
-                .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
+                .background(ifBlockBackground, shape = RoundedCornerShape(8.dp))
                 .padding(horizontal = 24.dp, vertical = 5.dp)
         ){
             Text(
@@ -157,7 +157,7 @@ fun IfBlock(block: IfBlock, distance: Dp) {
         modifier = Modifier.padding(start = distance)){
         Box(
             modifier = Modifier
-                .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
+                .background(ifBlockBackground, shape = RoundedCornerShape(8.dp))
                 .padding(12.dp)
         ) {
             Row(
@@ -211,7 +211,7 @@ fun WhileBlock(block: WhileBlock, distance: Dp) {
         modifier = Modifier.padding(start = distance)){
         Box(
             modifier = Modifier
-                .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
+                .background(ifBlockBackground, shape = RoundedCornerShape(8.dp))
                 .padding(12.dp)
         ) {
             Row(
@@ -235,7 +235,7 @@ fun WhileBlock(block: WhileBlock, distance: Dp) {
                 ) {
                     BasicTextField(
                         textStyle = TextStyle(
-                            color = if (value.isEmpty() && !isFocused) Color(0xFFA5A5A5) else Color.Black
+                            color = if (value.isEmpty() && !isFocused) TextInBlock else Color.Black
                         ),
                         value = if (value.isEmpty() && !isFocused) "condition" else value,
                         onValueChange = {
@@ -277,7 +277,7 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
             ) {
                 BasicTextField(
                     textStyle = TextStyle(
-                        color = if (value1.isEmpty() && !isFocused1) Color(0xFFA5A5A5) else Color.Black
+                        color = if (value1.isEmpty() && !isFocused1) TextInBlock else Color.Black
                     ),
                     value = if (value1.isEmpty() && !isFocused1) "name" else value1,
                     onValueChange = { newValue ->
@@ -311,7 +311,7 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
 
                 BasicTextField(
                     textStyle = TextStyle(
-                        color = if (value2.isEmpty() && !isFocused2) Color(0xFFA5A5A5) else Color.Black
+                        color = if (value2.isEmpty() && !isFocused2) TextInBlock else Color.Black
                     ),
                     value = if (value2.isEmpty() && !isFocused2) "value" else value2,
                     onValueChange = {
@@ -364,7 +364,7 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
                 )
                 BasicTextField(
                     textStyle = TextStyle(
-                        color = if (value1.isEmpty() && !isFocused1) Color(0xFFA5A5A5) else Color.Black
+                        color = if (value1.isEmpty() && !isFocused1) TextInBlock else Color.Black
                     ),
                     value = if (value1.isEmpty() && !isFocused1) "name" else value1,
                     onValueChange = { newValue ->
@@ -398,7 +398,7 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
 
                 BasicTextField(
                     textStyle = TextStyle(
-                        color = if (value2.isEmpty() && !isFocused2) Color(0xFFA5A5A5) else Color.Black
+                        color = if (value2.isEmpty() && !isFocused2) TextInBlock else Color.Black
                     ),
                     value = if (value2.isEmpty() && !isFocused2) "size" else value2,
                     onValueChange = {
