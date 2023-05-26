@@ -123,7 +123,7 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
                             print(index)
                             when (block) {
                                 is PrintBlock -> PrintBlock(
-                                    block = block, index
+                                    block = block
                                 )
                                 is SetVariableBlock -> SetVariableBlock(
                                     block = block
@@ -132,60 +132,7 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
                         }
                     }
                 }
-//                itemsIndexed(blocks) { index, block ->
-//                    val draggableModifier = Modifier
-//                        .pointerInput(Unit) {
-//                            detectDragGestures(
-//                                onDragStart = { offset ->
-//                                    block.startDragAndDrop()
-//                                    startDrag(index, offset)
-//                                },
-//                                onDragEnd = {
-//                                    endDrag()
-//                                }
-//                            )
-//                        }
-//                        .offset { if (index == draggedIndex) dragOffset else IntOffset.Zero }
-//
-//                    when (block) {
-//                        is PrintBlock -> PrintBlock(
-//                            block = block,
-//                            modifier = draggableModifier
-//                        )
-//                        is SetVariableBlock -> SetVariableBlock(
-//                            block = block,
-//                            modifier = draggableModifier
-//                        )
-//                    }
-//                }
             }
-
-    var draggedIndex by remember { mutableStateOf(-1) }
-    var dragOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-//    fun startDrag(index: Int, offset: Offset) {
-//        draggedIndex = index
-//        dragOffset = dragOffset.copy(
-//            x = offset.x.toInt(),
-//            y = offset.y.toInt()
-//        )
-//    }
-//
-//    fun endDrag() {
-//        draggedIndex = -1
-//        dragOffset = IntOffset.Zero
-//    }
-
-//    DisposableEffect(state) {
-//        val subscription = state.interactionSource.collect { interaction ->
-//            if (interaction is PointerInputChange.Press && interaction.changes.any { it.pressed }) {
-//                endDrag()
-//            }
-//        }
-//        onDispose {
-//            subscription.cancel()
-//        }
-//    }
 }
 
 

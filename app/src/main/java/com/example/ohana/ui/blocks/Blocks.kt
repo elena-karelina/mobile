@@ -39,7 +39,7 @@ import kotlin.math.roundToInt
 
 
 @Composable
-fun PrintBlock(block: PrintBlock, index: Int) {
+fun PrintBlock(block: PrintBlock) {
     var value by remember(block.value1) { mutableStateOf(block.value1) }
     val minWidth by remember { mutableStateOf(10.dp) }
 
