@@ -1,22 +1,21 @@
 package com.example.ohana
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,10 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.dp
 import com.example.ohana.*
 import com.example.ohana.logic.Block
 import com.example.ohana.logic.Interpretator
@@ -35,8 +32,8 @@ import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.Scope
 import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.ui.blocks.*
+import com.example.ohana.ui.theme.MainBackground
 import com.example.ohana.ui.user_interface.*
-
 import android.graphics.Canvas
 import android.graphics.Point
 import android.view.View
@@ -59,6 +56,7 @@ import org.burnoutcrew.reorderable.reorderable
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MainMenu()
         }
@@ -72,7 +70,7 @@ fun MainMenu() {
     val blocks = remember { mutableStateListOf<Block>() }
 
     Scaffold(
-        containerColor = Color(red = 64, green = 61, blue = 57, alpha = 255),
+        containerColor = MainBackground,
         floatingActionButton = {
             if (!isRunning) {
                 RunButton {
@@ -83,7 +81,7 @@ fun MainMenu() {
                     logs = int.scope.logs
                 }
             } else {
-                StopButton{
+                StopButton {
                     isRunning = !isRunning
                 }
             }
@@ -116,6 +114,7 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
         state = state.listState,
         modifier = Modifier
             .fillMaxSize()
+
             .padding(20.dp)
             .reorderable(state)
             .detectReorderAfterLongPress(state)
