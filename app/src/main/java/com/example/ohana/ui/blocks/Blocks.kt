@@ -39,8 +39,8 @@ import kotlin.math.roundToInt
 
 
 @Composable
-fun PrintBlock(block: PrintBlock) {
-    var value by remember { mutableStateOf(block.value1) }
+fun PrintBlock(block: PrintBlock, index: Int) {
+    var value by remember(block.value1) { mutableStateOf(block.value1) }
     val minWidth by remember { mutableStateOf(10.dp) }
 
     Box(modifier = Modifier
@@ -129,8 +129,8 @@ fun IfBlock(block: IfBlock) {
 }
 @Composable
 fun SetVariableBlock(block: SetVariableBlock) {
-    var value1 by remember { mutableStateOf(block.value1) }
-    var value2 by remember { mutableStateOf(block.value2) }
+    var value1 by remember(block.value1) { mutableStateOf(block.value1) }
+    var value2 by remember(block.value2) { mutableStateOf(block.value2) }
     val minWidth by remember { mutableStateOf(10.dp) }
 
     Box(

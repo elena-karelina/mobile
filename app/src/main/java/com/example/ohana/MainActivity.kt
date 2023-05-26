@@ -120,9 +120,10 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
                         Column(
                             modifier = Modifier
                                 .shadow(elevation.value)) {
+                            print(index)
                             when (block) {
                                 is PrintBlock -> PrintBlock(
-                                    block = block
+                                    block = block, index
                                 )
                                 is SetVariableBlock -> SetVariableBlock(
                                     block = block
