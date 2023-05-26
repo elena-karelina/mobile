@@ -31,6 +31,10 @@ import com.example.ohana.logic.Block
 import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetVariableBlock
+import com.example.ohana.logic.WhileBlock
+import com.example.ohana.logic.endIfBlock
+import com.example.ohana.logic.endWhileBlock
+import com.example.ohana.ui.blocks.EndIfBlock
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -77,9 +81,8 @@ fun RightMenu(
                             }
 
                             if (isControllersDropdownOpen.value) {
-                                item { MenuItem(text = "    if", onClick = { blocks.add(IfBlock(" ")) }) }
-                                item { MenuItem(text = "    if-else", onClick = {}) }
-                                item { MenuItem(text = "    while", onClick = {}) }
+                                item { MenuItem(text = "    if", onClick = { blocks.add(IfBlock("")); blocks.add(endIfBlock()) }) }
+                                item { MenuItem(text = "    while", onClick = {blocks.add(WhileBlock("")); blocks.add(endWhileBlock()) })  }
                                 item { MenuItem(text = "    repeat", onClick = {}) }
                             }
                             item {

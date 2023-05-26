@@ -28,9 +28,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.IfBlock
+import com.example.ohana.logic.PrintBlock
+
 import com.example.ohana.logic.SetVariableBlock
+import com.example.ohana.logic.WhileBlock
 
 
 @Composable
@@ -40,14 +42,14 @@ fun PrintBlock(block: PrintBlock) {
 
     Box(modifier = Modifier
             .background(Color(0xFF8338EC), RoundedCornerShape(8.dp))
-            .padding(10.dp)
+            .padding(12.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "print",
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 color = Color.White,
                 fontSize = 20.sp
             )
@@ -79,21 +81,36 @@ fun PrintBlock(block: PrintBlock) {
 }
 
 @Composable
+fun EndIfBlock(){
+    Box(
+        modifier = Modifier
+            .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+    ){
+        Text(
+            text = "end of if block",
+            modifier = Modifier.padding(horizontal = 4.dp),
+            color = Color.White,
+            fontSize = 10.sp
+        )
+    }
+}
+@Composable
 fun IfBlock(block: IfBlock) {
-    var value by remember { mutableStateOf("") }
+    var value by remember(block.value1) { mutableStateOf(block.value1) }
     val minWidth by remember { mutableStateOf(10.dp) }
 
     Box(
         modifier = Modifier
             .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
-            .padding(10.dp)
+            .padding(12.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "if",
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 color = Color.White,
                 fontSize = 20.sp
             )
@@ -108,9 +125,74 @@ fun IfBlock(block: IfBlock) {
                     .wrapContentHeight()
             ) {
                 BasicTextField(
+
                     value = value,
                     onValueChange = {
+                        block.value1 = it
                         value = it
+                        block.condition = it
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                    singleLine = true,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                )
+            }
+        }
+    }
+
+}
+@Composable
+fun EndWhileBlock(){
+    Box(
+        modifier = Modifier
+            .background(Color(0xFFa35541), shape = RoundedCornerShape(8.dp))
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+    ){
+        Text(
+            text = "end of while block",
+            modifier = Modifier.padding(horizontal = 4.dp),
+            color = Color.White,
+            fontSize = 10.sp
+        )
+    }
+}
+@Composable
+fun WhileBlock(block: WhileBlock) {
+    var value by remember(block.value1) { mutableStateOf(block.value1) }
+    val minWidth by remember { mutableStateOf(10.dp) }
+
+    Box(
+        modifier = Modifier
+            .background(Color(0xFFa35541), shape = RoundedCornerShape(8.dp))
+            .padding(12.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "while",
+                modifier = Modifier.padding(horizontal = 16.dp),
+                color = Color.White,
+                fontSize = 20.sp
+            )
+
+            Box(
+                modifier = Modifier
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .padding(vertical = 8.dp, horizontal = 10.dp)
+                    .widthIn(min = minWidth)
+                    .height(IntrinsicSize.Min)
+                    .width(IntrinsicSize.Min)
+                    .wrapContentHeight()
+            ) {
+                BasicTextField(
+
+                    value = value,
+                    onValueChange = {
+                        block.value1 = it
+                        value = it
+                        block.condition = it
                     },
                     modifier = Modifier.fillMaxSize(),
                     singleLine = true,

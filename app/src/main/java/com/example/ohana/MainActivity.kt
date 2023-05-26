@@ -47,6 +47,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
+import com.example.ohana.logic.IfBlock
+import com.example.ohana.logic.WhileBlock
+import com.example.ohana.logic.endIfBlock
+import com.example.ohana.logic.endWhileBlock
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -124,6 +128,16 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
                                 is PrintBlock -> PrintBlock(
                                     block = block
                                 )
+                                is WhileBlock -> WhileBlock(
+                                    block = block
+                                )
+                                is IfBlock -> IfBlock(
+                                    block = block
+                                )
+                                is endIfBlock -> EndIfBlock(
+                                )
+
+                                is endWhileBlock -> EndWhileBlock()
                                 is SetVariableBlock -> SetVariableBlock(
                                     block = block
                                 )

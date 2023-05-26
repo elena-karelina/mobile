@@ -28,8 +28,12 @@ class PrintBlock(var log: String): Block() {
         scope.setLog(solveMathExpression(scope, log).toString())
     }
 }
+class endIfBlock(): Block(){
+}
+class endWhileBlock(): Block(){
+}
 
-class IfBlock(val condition: String): Block() {
+class IfBlock(var condition: String): Block() {
     val ifBody = Body()
 
     override fun execute(scope: Scope) {
