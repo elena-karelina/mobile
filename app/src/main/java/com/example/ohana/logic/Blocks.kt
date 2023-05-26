@@ -1,7 +1,11 @@
 package com.example.ohana.logic
 
+import java.util.UUID
+
 open class Block {
     open fun execute(scope: Scope) { }
+    open var value1: String = ""
+    open var value2: String = ""
 }
 
 class Body {
@@ -19,13 +23,17 @@ class SetVariableBlock(var name: String, var value: String): Block() {
     }
 }
 
+class SetArrBlock(var name: String, var size: String): Block() {
+}
 class PrintBlock(var log: String): Block() {
     override fun execute(scope: Scope) {
         scope.setLog(solveMathExpression(scope, log).toString())
     }
 }
+class endBlock(): Block(){
+}
 
-class IfBlock(val condition: String): Block() {
+class IfBlock(var condition: String): Block() {
     val ifBody = Body()
 
     override fun execute(scope: Scope) {

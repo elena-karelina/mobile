@@ -1,24 +1,17 @@
 package com.example.ohana.ui.user_interface
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
@@ -29,20 +22,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ohana.BlocksDrawer
-import com.example.ohana.R
 import com.example.ohana.logic.Block
-import com.example.ohana.logic.Interpretator
+import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.PrintBlock
+import com.example.ohana.logic.SetArrBlock
 import com.example.ohana.logic.SetVariableBlock
+import com.example.ohana.logic.WhileBlock
+import com.example.ohana.logic.endBlock
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun RightMenu(
@@ -54,14 +46,11 @@ fun RightMenu(
     val isStreamsDropdownOpen = remember { mutableStateOf(false) }
     val isVariablesDropdownOpen = remember { mutableStateOf(false) }
 
-
-    // Установка обратного направления чтения для drawerContent
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
             scrimColor = Color.Transparent,
             drawerState = drawerState,
             drawerContent = {
-                // Установка обычного направления чтения для контента drawerContent
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     ModalDrawerSheet(
                         drawerContainerColor = Color(0xFF4A4744),
@@ -88,10 +77,10 @@ fun RightMenu(
                             }
 
                             if (isControllersDropdownOpen.value) {
-                                item { MenuItem(text = "    if", onClick = {}) }
-                                item { MenuItem(text = "    if-else", onClick = {}) }
-                                item { MenuItem(text = "    while", onClick = {}) }
-                                item { MenuItem(text = "    repeat", onClick = {}) }
+                                item { MenuItem(text = "    if", onClick = { blocks.add(IfBlock("")); blocks.add(endBlock()) }) }
+                                item { MenuItem(text = "    while", onClick = {blocks.add(WhileBlock("")); blocks.add(
+                                    endBlock()
+                                ) })  }
                             }
                             item {
                                 MenuItem(
@@ -136,6 +125,11 @@ fun RightMenu(
                                         text = "    Set variable",
                                         onClick = { blocks.add(SetVariableBlock("", "")) })
                                 }
+                                item {
+                                    MenuItem(
+                                        text = "    Set array",
+                                        onClick = { blocks.add(SetArrBlock("", "")) })
+                                }
                             }
                             item { MenuItem(text = "Clear", onClick = { blocks.clear() }) }
                         }
@@ -143,9 +137,7 @@ fun RightMenu(
                 }
             },
             content = {
-                // Установка обычного направления чтения для content
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                    // TODO вставить отрисовку блоков сюда
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     BlocksDrawer(blocks)
                     OpenMenuButton(scope, drawerState)
                 }
