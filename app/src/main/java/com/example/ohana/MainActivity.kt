@@ -107,46 +107,53 @@ fun MainMenu() {
 // Отрисовка всех блоков
 @Composable
 fun BlocksDrawer(blocks: MutableList<Block>) {
+    var distance = 0.dp
     val state = rememberReorderableLazyListState(onMove = { from, to ->
         blocks.apply {
             add(to.index, removeAt(from.index))
         }
     })
-            LazyColumn(
-                state = state.listState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .reorderable(state)
-                    .detectReorderAfterLongPress(state)) {
-                itemsIndexed(blocks) { index, block ->
-                    ReorderableItem(state, key = block) { isDragging ->
-                        val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp)
-                        Column(
-                            modifier = Modifier
-                                .shadow(elevation.value)) {
-                            when (block) {
-                                is PrintBlock -> PrintBlock(
-                                    block = block
-                                )
-                                is WhileBlock -> WhileBlock(
-                                    block = block
-                                )
-                                is IfBlock -> IfBlock(
-                                    block = block
-                                )
-                                is endIfBlock -> EndIfBlock(
-                                )
-
-                                is endWhileBlock -> EndWhileBlock()
-                                is SetVariableBlock -> SetVariableBlock(
-                                    block = block
-                                )
-                    }
+    LazyColumn(
+        state = state.listState,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+            .reorderable(state)
+            .detectReorderAfterLongPress(state)
+    ) {
+        itemsIndexed(blocks) { index, block ->
+            ReorderableItem(state, key = block) { isDragging ->
+                val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp)
+                Column(
+                    modifier = Modifier
+                        .shadow(elevation.value)
+                ) {
+                    when (block) {
+                        is PrintBlock -> PrintBlock(block = block, distance)
+                        is WhileBlock -> {
+                            WhileBlock(block = block, distance)
+                            distance += 20.dp
                         }
+                        is IfBlock -> {
+                            IfBlock(block = block, distance)
+                            distance += 20.dp
+                        }
+                        is endIfBlock -> {
+                            distance -= 20.dp
+                            EndIfBlock(distance)
+                        }
+                        is endWhileBlock -> {
+                            distance -= 20.dp
+                            EndWhileBlock(distance)
+                        }
+                        is SetVariableBlock -> SetVariableBlock(block = block, distance)
                     }
                 }
             }
+        }
+    }
 }
+
 
 
 
