@@ -81,6 +81,50 @@ fun PrintBlock(block: PrintBlock, distance: Dp) {
     }
 }
 
+//@Composable
+//fun InputBlock(block: InputBlock, distance: Dp) {
+//    var value by remember(block.value1) { mutableStateOf(block.value1) }
+//    val minWidth by remember { mutableStateOf(10.dp) }
+//    Box(modifier = Modifier.padding(start=distance)){
+//        Box(modifier = Modifier
+//            .background(Color(0xFF8338EC), RoundedCornerShape(8.dp))
+//            .padding(12.dp)
+//        ) {
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically,
+//            ) {
+//                Text(
+//                    text = "input",
+//                    modifier = Modifier.padding(horizontal = 16.dp),
+//                    color = Color.White,
+//                    fontSize = 20.sp
+//                )
+//
+//                Box(modifier = Modifier
+//                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+//                    .padding(vertical = 8.dp, horizontal = 10.dp)
+//                    .widthIn(min = minWidth)
+//                    .height(IntrinsicSize.Min)
+//                    .width(IntrinsicSize.Min)
+//                    .wrapContentHeight()
+//                ) {
+//                    BasicTextField(
+//                        value = value,
+//                        onValueChange = {
+//                            block.value1 = it
+//                            value = it
+//                            block.log = it
+//                        },
+//                        modifier = Modifier.fillMaxSize(),
+//                        singleLine = true,
+//                        maxLines = 1,
+//                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
 @Composable
 fun EndIfBlock(distance: Dp){
     Box(
