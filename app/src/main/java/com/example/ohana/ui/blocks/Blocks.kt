@@ -300,40 +300,40 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
                     visualTransformation = VisualTransformation.None
                 )
 
-                    Text(
-                        text = "=",
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = Color.White,
-                        fontSize = 30.sp
-                    )
+                Text(
+                    text = "=",
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = Color.White,
+                    fontSize = 30.sp
+                )
 
-                    BasicTextField(
-                        textStyle = TextStyle(
-                            color = if (value2.isEmpty() && !isFocused2) Color(0xFFA5A5A5) else Color.Black
-                        ),
-                        value = if (value2.isEmpty() && !isFocused2) "value" else value2,
-                        onValueChange = {
-                            value2 = it
-                            block.value = value2
-                            block.value2 = value2
-                        },
-                        modifier = Modifier
-                            .onFocusChanged { isFocused2 = it.isFocused }
-                            .background(Color.White, shape = RoundedCornerShape(8.dp))
-                            .padding(vertical = 8.dp, horizontal = 10.dp)
-                            .widthIn(min = minWidth)
-                            .height(IntrinsicSize.Min)
-                            .width(IntrinsicSize.Min)
-                            .wrapContentHeight(),
-                        singleLine = true,
-                        maxLines = 1,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-                    )
-                }
+                BasicTextField(
+                    textStyle = TextStyle(
+                        color = if (value2.isEmpty() && !isFocused2) Color(0xFFA5A5A5) else Color.Black
+                    ),
+                    value = if (value2.isEmpty() && !isFocused2) "value" else value2,
+                    onValueChange = {
+                        value2 = it
+                        block.value = value2
+                        block.value2 = value2
+                    },
+                    modifier = Modifier
+                        .onFocusChanged { isFocused2 = it.isFocused }
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
+                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                        .widthIn(min = minWidth)
+                        .height(IntrinsicSize.Min)
+                        .width(IntrinsicSize.Min)
+                        .wrapContentHeight(),
+                    singleLine = true,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                )
             }
         }
-
     }
+
+}
 
 @Composable
 fun SetArrBlock(block: SetArrBlock, distance: Dp) {

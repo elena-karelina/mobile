@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import com.example.ohana.R
+import com.example.ohana.ui.theme.runButton
+import com.example.ohana.ui.theme.stopButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -21,7 +23,7 @@ import kotlinx.coroutines.launch
 fun RunButton(onClick: () -> Unit) {
     FloatingActionButton(
         onClick = { onClick() },
-        containerColor = Color(red = 42, green = 157, blue = 143, alpha = 255),
+        containerColor = runButton,
         shape = CircleShape
     ) {
         Image(
@@ -35,7 +37,7 @@ fun RunButton(onClick: () -> Unit) {
 fun StopButton(onClick: () -> Unit) {
     FloatingActionButton(
         onClick = { onClick() },
-        containerColor = Color(red = 230, green = 57, blue = 70, alpha = 255),
+        containerColor = stopButton,
         shape = CircleShape
     ) {
         Image(
