@@ -34,6 +34,20 @@ import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.ui.blocks.*
 import com.example.ohana.ui.theme.MainBackground
 import com.example.ohana.ui.user_interface.*
+import android.graphics.Canvas
+import android.graphics.Point
+import android.view.View
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.dp
+import androidx.core.content.res.ResourcesCompat
+import com.example.ohana.logic.IfBlock
+import com.example.ohana.logic.SetArrBlock
+import com.example.ohana.logic.WhileBlock
+import com.example.ohana.logic.endBlock
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -88,10 +102,9 @@ fun MainMenu() {
 }
 
 
-// Отрисовка всех блоков
-@SuppressLint("SuspiciousIndentation")
 @Composable
 fun BlocksDrawer(blocks: MutableList<Block>) {
+    var distance = 0.dp
     val state = rememberReorderableLazyListState(onMove = { from, to ->
         blocks.apply {
             add(to.index, removeAt(from.index))
@@ -101,6 +114,8 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
         state = state.listState,
         modifier = Modifier
             .fillMaxSize()
+
+            .padding(20.dp)
             .reorderable(state)
             .detectReorderAfterLongPress(state)
     ) {
@@ -112,19 +127,29 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
                         .shadow(elevation.value)
                 ) {
                     when (block) {
-                        is PrintBlock -> PrintBlock(
-                            block = block
-                        )
+                        is PrintBlock -> PrintBlock(block = block, distance)
+                        is WhileBlock -> {
+                            WhileBlock(block = block, distance)
+                            distance += 20.dp
+                        }
+                        is IfBlock -> {
+                            IfBlock(block = block, distance)
+                            distance += 20.dp
+                        }
+                        is endBlock -> {
+                            distance -= 20.dp
+                            EndBlock(distance)
+                        }
 
-                        is SetVariableBlock -> SetVariableBlock(
-                            block = block
-                        )
+                        is SetVariableBlock -> SetVariableBlock(block = block, distance)
+                        is SetArrBlock -> SetArrBlock(block = block, distance)
                     }
                 }
             }
         }
     }
 }
+
 
 
 
