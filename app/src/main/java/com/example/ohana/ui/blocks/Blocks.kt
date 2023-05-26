@@ -1,6 +1,7 @@
 package com.example.ohana.ui.blocks
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -22,7 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -147,6 +150,7 @@ fun EndBlock(distance: Dp){
 fun IfBlock(block: IfBlock, distance: Dp) {
     var value by remember(block.value1) { mutableStateOf(block.value1) }
     val minWidth by remember { mutableStateOf(10.dp) }
+    var isFocused by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier.padding(start = distance)){
         Box(
@@ -174,14 +178,18 @@ fun IfBlock(block: IfBlock, distance: Dp) {
                         .wrapContentHeight()
                 ) {
                     BasicTextField(
-
-                        value = value,
+                        textStyle = TextStyle(
+                            color = if (value.isEmpty() && !isFocused) Color(0xFFA5A5A5) else Color.Black
+                        ),
+                        value = if (value.isEmpty() && !isFocused) "condition" else value,
                         onValueChange = {
                             block.value1 = it
                             value = it
                             block.condition = it
                         },
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .onFocusChanged { isFocused = it.isFocused },
                         singleLine = true,
                         maxLines = 1,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
@@ -196,6 +204,7 @@ fun IfBlock(block: IfBlock, distance: Dp) {
 fun WhileBlock(block: WhileBlock, distance: Dp) {
     var value by remember(block.value1) { mutableStateOf(block.value1) }
     val minWidth by remember { mutableStateOf(10.dp) }
+    var isFocused by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier.padding(start = distance)){
         Box(
@@ -223,14 +232,17 @@ fun WhileBlock(block: WhileBlock, distance: Dp) {
                         .wrapContentHeight()
                 ) {
                     BasicTextField(
-
-                        value = value,
+                        textStyle = TextStyle(
+                            color = if (value.isEmpty() && !isFocused) Color(0xFFA5A5A5) else Color.Black
+                        ),
+                        value = if (value.isEmpty() && !isFocused) "condition" else value,
                         onValueChange = {
                             block.value1 = it
                             value = it
                             block.condition = it
                         },
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize()
+                            .onFocusChanged { isFocused = it.isFocused },
                         singleLine = true,
                         maxLines = 1,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
@@ -245,8 +257,13 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
     var value1 by remember(block.value1) { mutableStateOf(block.value1) }
     var value2 by remember(block.value2) { mutableStateOf(block.value2) }
     val minWidth by remember { mutableStateOf(10.dp) }
+    var isFocused1 by remember { mutableStateOf(false) }
+    var isFocused2 by remember { mutableStateOf(false) }
+
+
     Box(
-        modifier = Modifier.padding(start = distance)){
+        modifier = Modifier.padding(start = distance)
+    ) {
         Box(
             modifier = Modifier
                 .wrapContentSize()
@@ -257,13 +274,17 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 BasicTextField(
-                    value = value1,
+                    textStyle = TextStyle(
+                        color = if (value1.isEmpty() && !isFocused1) Color(0xFFA5A5A5) else Color.Black
+                    ),
+                    value = if (value1.isEmpty() && !isFocused1) "name" else value1,
                     onValueChange = { newValue ->
                         value1 = newValue.replace(Regex("[^a-z]"), "")
                         block.name = value1
                         block.value1 = value1
                     },
                     modifier = Modifier
+                        .onFocusChanged { isFocused1 = it.isFocused }
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
                         .padding(vertical = 8.dp, horizontal = 10.dp)
                         .height(IntrinsicSize.Min)
@@ -279,43 +300,51 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
                     visualTransformation = VisualTransformation.None
                 )
 
-                Text(
-                    text = "=",
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    color = Color.White,
-                    fontSize = 30.sp
-                )
+                    Text(
+                        text = "=",
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = Color.White,
+                        fontSize = 30.sp
+                    )
 
-                BasicTextField(
-                    value = value2,
-                    onValueChange = {
-                        value2 = it
-                        block.value = value2
-                        block.value2 = value2
-                    },
-                    modifier = Modifier
-                        .background(Color.White, shape = RoundedCornerShape(8.dp))
-                        .padding(vertical = 8.dp, horizontal = 10.dp)
-                        .widthIn(min = minWidth)
-                        .height(IntrinsicSize.Min)
-                        .width(IntrinsicSize.Min)
-                        .wrapContentHeight(),
-                    singleLine = true,
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-                )
+                    BasicTextField(
+                        textStyle = TextStyle(
+                            color = if (value2.isEmpty() && !isFocused2) Color(0xFFA5A5A5) else Color.Black
+                        ),
+                        value = if (value2.isEmpty() && !isFocused2) "value" else value2,
+                        onValueChange = {
+                            value2 = it
+                            block.value = value2
+                            block.value2 = value2
+                        },
+                        modifier = Modifier
+                            .onFocusChanged { isFocused2 = it.isFocused }
+                            .background(Color.White, shape = RoundedCornerShape(8.dp))
+                            .padding(vertical = 8.dp, horizontal = 10.dp)
+                            .widthIn(min = minWidth)
+                            .height(IntrinsicSize.Min)
+                            .width(IntrinsicSize.Min)
+                            .wrapContentHeight(),
+                        singleLine = true,
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                    )
+                }
             }
         }
+
     }
 
-}
 @Composable
 fun SetArrBlock(block: SetArrBlock, distance: Dp) {
     var value1 by remember(block.value1) { mutableStateOf(block.value1) }
     var value2 by remember(block.value2) { mutableStateOf(block.value2) }
     val minWidth by remember { mutableStateOf(10.dp) }
+    var isFocused1 by remember { mutableStateOf(false) }
+    var isFocused2 by remember { mutableStateOf(false) }
     Box(
-        modifier = Modifier.padding(start = distance)){
+        modifier = Modifier.padding(start = distance)
+    ) {
         Box(
             modifier = Modifier
                 .wrapContentSize()
@@ -328,17 +357,21 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
                 Text(
                     text = "arr",
                     color = Color.White,
-                    fontSize = 20.sp ,
-                    modifier = Modifier.padding( end = 8.dp),
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(end = 8.dp),
                 )
                 BasicTextField(
-                    value = value1,
+                    textStyle = TextStyle(
+                        color = if (value1.isEmpty() && !isFocused1) Color(0xFFA5A5A5) else Color.Black
+                    ),
+                    value = if (value1.isEmpty() && !isFocused1) "name" else value1,
                     onValueChange = { newValue ->
                         value1 = newValue.replace(Regex("[^a-z]"), "")
                         block.name = value1
                         block.value1 = value1
                     },
                     modifier = Modifier
+                        .onFocusChanged { isFocused1 = it.isFocused }
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
                         .padding(vertical = 8.dp, horizontal = 10.dp)
                         .height(IntrinsicSize.Min)
@@ -355,20 +388,24 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
                 )
 
                 Text(
-                    text = "size:",
+                    text = " ",
                     modifier = Modifier.padding(start = 8.dp, end = 8.dp),
                     color = Color.White,
                     fontSize = 20.sp
                 )
 
                 BasicTextField(
-                    value = value2,
+                    textStyle = TextStyle(
+                        color = if (value2.isEmpty() && !isFocused2) Color(0xFFA5A5A5) else Color.Black
+                    ),
+                    value = if (value2.isEmpty() && !isFocused2) "size" else value2,
                     onValueChange = {
                         value2 = it
                         block.size = value2
                         block.value2 = value2
                     },
                     modifier = Modifier
+                        .onFocusChanged { isFocused2 = it.isFocused }
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
                         .padding(vertical = 8.dp, horizontal = 10.dp)
                         .widthIn(min = minWidth)
