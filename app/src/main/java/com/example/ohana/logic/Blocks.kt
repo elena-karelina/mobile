@@ -1,7 +1,11 @@
 package com.example.ohana.logic
 
+import java.util.UUID
+
 open class Block {
     open fun execute(scope: Scope) { }
+    open var value1: String = ""
+    open var value2: String = ""
 }
 
 class Body {

@@ -66,4 +66,6 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+     //implementation 'com.github.zach-klippenstein:composable-reorderable:0.7.0'
+    implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
 }

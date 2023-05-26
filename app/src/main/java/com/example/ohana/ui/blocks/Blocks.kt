@@ -33,18 +33,18 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ohana.logic.PrintBlock
+import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.SetVariableBlock
 import kotlin.math.roundToInt
 
 
 @Composable
 fun PrintBlock(block: PrintBlock) {
-    var value by remember { mutableStateOf("") }
+    var value by remember { mutableStateOf(block.value1) }
     val minWidth by remember { mutableStateOf(10.dp) }
 
-    Box(
-        modifier = Modifier
-            .background(Color(0xFF8338EC), shape = RoundedCornerShape(8.dp))
+    Box(modifier = Modifier
+            .background(Color(0xFF8338EC), RoundedCornerShape(8.dp))
             .padding(10.dp)
     ) {
         Row(
@@ -52,6 +52,52 @@ fun PrintBlock(block: PrintBlock) {
         ) {
             Text(
                 text = "print",
+                modifier = Modifier.padding(horizontal = 4.dp),
+                color = Color.White,
+                fontSize = 20.sp
+            )
+
+            Box(modifier = Modifier
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .padding(vertical = 8.dp, horizontal = 10.dp)
+                    .widthIn(min = minWidth)
+                    .height(IntrinsicSize.Min)
+                    .width(IntrinsicSize.Min)
+                    .wrapContentHeight()
+            ) {
+                BasicTextField(
+                    value = value,
+                    onValueChange = {
+                        block.value1 = it
+                        value = it
+                        block.log = it
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                    singleLine = true,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                )
+            }
+        }
+    }
+
+}
+
+@Composable
+fun IfBlock(block: IfBlock) {
+    var value by remember { mutableStateOf("") }
+    val minWidth by remember { mutableStateOf(10.dp) }
+
+    Box(
+        modifier = Modifier
+            .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
+            .padding(10.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "if",
                 modifier = Modifier.padding(horizontal = 4.dp),
                 color = Color.White,
                 fontSize = 20.sp
@@ -70,7 +116,6 @@ fun PrintBlock(block: PrintBlock) {
                     value = value,
                     onValueChange = {
                         value = it
-                        block.log = it
                     },
                     modifier = Modifier.fillMaxSize(),
                     singleLine = true,
@@ -82,11 +127,10 @@ fun PrintBlock(block: PrintBlock) {
     }
 
 }
-
 @Composable
 fun SetVariableBlock(block: SetVariableBlock) {
-    var value1 by remember { mutableStateOf("") }
-    var value2 by remember { mutableStateOf("") }
+    var value1 by remember { mutableStateOf(block.value1) }
+    var value2 by remember { mutableStateOf(block.value2) }
     val minWidth by remember { mutableStateOf(10.dp) }
 
     Box(
@@ -103,6 +147,7 @@ fun SetVariableBlock(block: SetVariableBlock) {
                 onValueChange = { newValue ->
                     value1 = newValue.replace(Regex("[^a-z]"), "")
                     block.name = value1
+                    block.value1 = value1
                 },
                 modifier = Modifier
                     .background(Color.White, shape = RoundedCornerShape(8.dp))
@@ -122,7 +167,7 @@ fun SetVariableBlock(block: SetVariableBlock) {
 
             Text(
                 text = "=",
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 color = Color.White,
                 fontSize = 30.sp
             )
@@ -132,6 +177,7 @@ fun SetVariableBlock(block: SetVariableBlock) {
                 onValueChange = {
                     value2 = it
                     block.value = value2
+                    block.value2 = value2
                 },
                 modifier = Modifier
                     .background(Color.White, shape = RoundedCornerShape(8.dp))
