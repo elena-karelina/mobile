@@ -31,6 +31,12 @@ import com.example.ohana.logic.Block
 import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetVariableBlock
+import com.example.ohana.ui.theme.ConsoleBackground
+import com.example.ohana.ui.theme.ConsoleText
+import com.example.ohana.ui.theme.ConsoleTextBackground
+import com.example.ohana.ui.theme.InterFont
+import com.example.ohana.ui.theme.MenuBlockBackground
+import com.example.ohana.ui.theme.RightMenuBackground
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -53,7 +59,7 @@ fun RightMenu(
                 // Установка обычного направления чтения для контента drawerContent
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     ModalDrawerSheet(
-                        drawerContainerColor = Color(0xFF4A4744),
+                        drawerContainerColor = RightMenuBackground,
                         modifier = Modifier.fillMaxWidth(0.6f)
                     ) {
                         LazyColumn(
@@ -65,13 +71,14 @@ fun RightMenu(
                             item {
                                 MenuItem(
                                     text = "Controllers",
+
                                     onClick = {
                                         isControllersDropdownOpen.value =
                                             !isControllersDropdownOpen.value
                                     },
-                                    menuItemBackgroundColor = if (isControllersDropdownOpen.value) Color(
-                                        0xFF4F4C49
-                                    ) else Color.Transparent,
+                                    menuItemBackgroundColor = if (isControllersDropdownOpen.value)
+                                        MenuBlockBackground
+                                    else Color.Transparent,
                                     isNested = false
                                 )
                             }
@@ -88,9 +95,9 @@ fun RightMenu(
                                     onClick = {
                                         isStreamsDropdownOpen.value = !isStreamsDropdownOpen.value
                                     },
-                                    menuItemBackgroundColor = if (isStreamsDropdownOpen.value) Color(
-                                        0xFF4F4C49
-                                    ) else Color.Transparent,
+                                    menuItemBackgroundColor = if (isStreamsDropdownOpen.value)
+                                        MenuBlockBackground
+                                    else Color.Transparent,
                                     isNested = false
                                 )
                             }
@@ -113,9 +120,9 @@ fun RightMenu(
                                         isVariablesDropdownOpen.value =
                                             !isVariablesDropdownOpen.value
                                     },
-                                    menuItemBackgroundColor = if (isVariablesDropdownOpen.value) Color(
-                                        0xFF4F4C49
-                                    ) else Color.Transparent,
+                                    menuItemBackgroundColor = if (isVariablesDropdownOpen.value)
+                                        MenuBlockBackground
+                                    else Color.Transparent,
                                     isNested = false
                                 )
                             }
@@ -163,11 +170,23 @@ fun MenuItem(
             .clickable(onClick = onClick)
             .padding(horizontal = horizontalPadding, vertical = 16.dp)
     ) {
-        Text(
-            text = text,
-            fontSize = 20.sp,
-            color = Color.White
-        )
+        if (text == "Clear") {
+            Text(
+                text = text,
+                fontSize = 30.sp,
+                color = Color.White,
+                fontFamily = InterFont
+            )
+        }
+        else {
+                Text(
+                    text = text,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    fontFamily = InterFont
+                )
+        }
+
     }
 }
 
@@ -183,17 +202,18 @@ fun Console(logs: List<String>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(250.dp)
-                .background(Color(red = 74, green = 71, blue = 73, alpha = 255))
+                .background(ConsoleBackground)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(20.dp)
-                    .background(Color(red = 74, green = 71, blue = 68, alpha = 255))
+                    .background(ConsoleTextBackground)
             ) {
                 Text(
-                    "     console output",
-                    color = Color(red = 179, green = 179, blue = 179, alpha = 255)
+                    text = "     console output",
+                    fontFamily = InterFont,
+                    color = ConsoleText
                 )
             }
             LazyColumn(
@@ -204,8 +224,9 @@ fun Console(logs: List<String>) {
                 item {
                     logs.forEach() {
                         Text(
-                            "    >> " + it,
-                            color = Color(red = 179, green = 179, blue = 179, alpha = 255)
+                            text = "    >> " + it,
+                            fontFamily = InterFont,
+                            color = ConsoleText
                         )
                     }
                 }

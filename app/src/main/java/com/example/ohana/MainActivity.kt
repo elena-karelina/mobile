@@ -24,7 +24,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.ohana.*
 import com.example.ohana.logic.Block
@@ -33,6 +32,7 @@ import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.Scope
 import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.ui.blocks.*
+import com.example.ohana.ui.theme.MainBackground
 import com.example.ohana.ui.user_interface.*
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -42,6 +42,7 @@ import org.burnoutcrew.reorderable.reorderable
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MainMenu()
         }
@@ -55,7 +56,7 @@ fun MainMenu() {
     val blocks = remember { mutableStateListOf<Block>() }
 
     Scaffold(
-        containerColor = Color(red = 64, green = 61, blue = 57, alpha = 255),
+        containerColor = MainBackground,
         floatingActionButton = {
             if (!isRunning) {
                 RunButton {
@@ -66,7 +67,7 @@ fun MainMenu() {
                     logs = int.scope.logs
                 }
             } else {
-                StopButton{
+                StopButton {
                     isRunning = !isRunning
                 }
             }
@@ -96,30 +97,33 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
             add(to.index, removeAt(from.index))
         }
     })
-            LazyColumn(
-                state = state.listState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .reorderable(state)
-                    .detectReorderAfterLongPress(state)) {
-                itemsIndexed(blocks) { index, block ->
-                    ReorderableItem(state, key = block) { isDragging ->
-                        val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp)
-                        Column(
-                            modifier = Modifier
-                                .shadow(elevation.value)) {
-                            when (block) {
-                                is PrintBlock -> PrintBlock(
-                                    block = block
-                                )
-                                is SetVariableBlock -> SetVariableBlock(
-                                    block = block
-                                )
-                    }
-                        }
+    LazyColumn(
+        state = state.listState,
+        modifier = Modifier
+            .fillMaxSize()
+            .reorderable(state)
+            .detectReorderAfterLongPress(state)
+    ) {
+        itemsIndexed(blocks) { index, block ->
+            ReorderableItem(state, key = block) { isDragging ->
+                val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp)
+                Column(
+                    modifier = Modifier
+                        .shadow(elevation.value)
+                ) {
+                    when (block) {
+                        is PrintBlock -> PrintBlock(
+                            block = block
+                        )
+
+                        is SetVariableBlock -> SetVariableBlock(
+                            block = block
+                        )
                     }
                 }
             }
+        }
+    }
 }
 
 

@@ -28,9 +28,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.IfBlock
+import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetVariableBlock
+import com.example.ohana.ui.theme.InterFont
+import com.example.ohana.ui.theme.ifBlockBackground
+import com.example.ohana.ui.theme.printBlockBackground
+import com.example.ohana.ui.theme.variableBlockBackground
 
 
 @Composable
@@ -39,7 +43,7 @@ fun PrintBlock(block: PrintBlock) {
     val minWidth by remember { mutableStateOf(10.dp) }
 
     Box(modifier = Modifier
-            .background(Color(0xFF8338EC), RoundedCornerShape(8.dp))
+            .background(printBlockBackground, RoundedCornerShape(8.dp))
             .padding(10.dp)
     ) {
         Row(
@@ -49,6 +53,7 @@ fun PrintBlock(block: PrintBlock) {
                 text = "print",
                 modifier = Modifier.padding(horizontal = 4.dp),
                 color = Color.White,
+                fontFamily = InterFont,
                 fontSize = 20.sp
             )
 
@@ -85,7 +90,7 @@ fun IfBlock(block: IfBlock) {
 
     Box(
         modifier = Modifier
-            .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
+            .background(ifBlockBackground, shape = RoundedCornerShape(8.dp))
             .padding(10.dp)
     ) {
         Row(
@@ -95,6 +100,7 @@ fun IfBlock(block: IfBlock) {
                 text = "if",
                 modifier = Modifier.padding(horizontal = 4.dp),
                 color = Color.White,
+                fontFamily = InterFont,
                 fontSize = 20.sp
             )
 
@@ -131,7 +137,7 @@ fun SetVariableBlock(block: SetVariableBlock) {
     Box(
         modifier = Modifier
             .wrapContentSize()
-            .background(Color(0xFF2A9D8F), shape = RoundedCornerShape(8.dp))
+            .background(variableBlockBackground, shape = RoundedCornerShape(8.dp))
             .padding(10.dp)
     ) {
         Row(
@@ -164,6 +170,7 @@ fun SetVariableBlock(block: SetVariableBlock) {
                 text = "=",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 color = Color.White,
+                fontFamily = InterFont,
                 fontSize = 30.sp
             )
 

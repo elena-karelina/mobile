@@ -65,6 +65,7 @@ fun OhanaTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
-    )
+    ) {
+        content()
+    }
 }
