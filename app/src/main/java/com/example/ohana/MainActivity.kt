@@ -453,7 +453,7 @@ fun RightMenu(
 fun MyList(blocks: List<String>, onBlocksUpdate: (List<String>) -> Unit) {
     val state = rememberLazyListState()
     LazyColumn(state = state,
-            modifier = Modifier.fillMaxSize(1f)) {
+        modifier = Modifier.fillMaxSize(1f)) {
         itemsIndexed(blocks) { index, block ->
             var isDragging by remember { mutableStateOf(false) }
 
@@ -499,7 +499,6 @@ fun MyList(blocks: List<String>, onBlocksUpdate: (List<String>) -> Unit) {
         }
     }
 }
-
 
 @Composable
 fun MenuItem(
