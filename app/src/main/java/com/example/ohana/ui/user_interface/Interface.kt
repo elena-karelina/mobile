@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -41,6 +42,8 @@ import com.example.ohana.logic.Block
 import com.example.ohana.logic.Interpretator
 import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetVariableBlock
+import com.example.ohana.ui.blocks.PrintBlock
+import com.example.ohana.ui.blocks.SetVariableBlock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -144,9 +147,9 @@ fun RightMenu(
             },
             content = {
                 // Установка обычного направления чтения для content
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     // TODO вставить отрисовку блоков сюда
-                    BlocksDrawer(blocks)
+                    BlocksDrawer(blocks = blocks)
                     OpenMenuButton(scope, drawerState)
                 }
             }

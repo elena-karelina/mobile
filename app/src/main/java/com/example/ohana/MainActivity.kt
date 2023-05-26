@@ -81,11 +81,16 @@ fun MainMenu() {
 // Отрисовка всех блоков
 @Composable
 fun BlocksDrawer(blocks: MutableList<Block>) {
-    blocks.forEach {
-        when(it) {
-            is PrintBlock -> PrintBlock(block = it)
-            is SetVariableBlock -> SetVariableBlock(block = it)
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()) {
+        itemsIndexed(blocks) { index, block ->
+            when (block) {
+                is PrintBlock -> PrintBlock(block = block)
+                is SetVariableBlock -> SetVariableBlock(block = block)
+            }
         }
     }
 }
+
+
 
