@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetVariableBlock
-import com.example.ohana.ui.theme.InterFont
 import com.example.ohana.ui.theme.ifBlockBackground
 import com.example.ohana.ui.theme.printBlockBackground
 import com.example.ohana.ui.theme.variableBlockBackground
@@ -53,7 +52,6 @@ fun PrintBlock(block: PrintBlock) {
                 text = "print",
                 modifier = Modifier.padding(horizontal = 4.dp),
                 color = Color.White,
-                fontFamily = InterFont,
                 fontSize = 20.sp
             )
 
@@ -100,7 +98,6 @@ fun IfBlock(block: IfBlock) {
                 text = "if",
                 modifier = Modifier.padding(horizontal = 4.dp),
                 color = Color.White,
-                fontFamily = InterFont,
                 fontSize = 20.sp
             )
 
@@ -170,7 +167,6 @@ fun SetVariableBlock(block: SetVariableBlock) {
                 text = "=",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 color = Color.White,
-                fontFamily = InterFont,
                 fontSize = 30.sp
             )
 
