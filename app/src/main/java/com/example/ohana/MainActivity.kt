@@ -25,18 +25,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.example.ohana.logic.Block
+import com.example.ohana.logic.EndBlock
+import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.Interpretator
 import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.Scope
-import com.example.ohana.logic.SetVariableBlock
-import com.example.ohana.ui.blocks.*
-import com.example.ohana.ui.theme.MainBackground
-import com.example.ohana.ui.user_interface.*
-import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.SetArrBlock
+import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.logic.WhileBlock
-import com.example.ohana.logic.EndBlock
 import com.example.ohana.logic.parse
+import com.example.ohana.ui.blocks.EndBlock
+import com.example.ohana.ui.blocks.IfBlock
+import com.example.ohana.ui.blocks.PrintBlock
+import com.example.ohana.ui.blocks.SetArrBlock
+import com.example.ohana.ui.blocks.SetVariableBlock
+import com.example.ohana.ui.blocks.WhileBlock
+import com.example.ohana.ui.theme.MainBackground
+import com.example.ohana.ui.user_interface.Console
+import com.example.ohana.ui.user_interface.RightMenu
+import com.example.ohana.ui.user_interface.RunButton
+import com.example.ohana.ui.user_interface.StopButton
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -126,10 +134,12 @@ fun BlocksDrawer(blocks: MutableList<Block>) {
                             WhileBlock(block = block, distance)
                             distance += 20.dp
                         }
+
                         is IfBlock -> {
                             IfBlock(block = block, distance)
                             distance += 20.dp
                         }
+
                         is EndBlock -> {
                             if (distance - 20.dp >= 0.dp) {
                                 distance -= 20.dp

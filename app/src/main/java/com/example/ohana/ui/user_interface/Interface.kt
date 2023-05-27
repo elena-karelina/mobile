@@ -1,5 +1,8 @@
 package com.example.ohana.ui.user_interface
 
+import android.app.Activity
+import android.app.AlertDialog
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
@@ -29,12 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ohana.BlocksDrawer
 import com.example.ohana.logic.Block
+import com.example.ohana.logic.EndBlock
 import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetArrBlock
 import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.logic.WhileBlock
-import com.example.ohana.logic.EndBlock
 import com.example.ohana.ui.theme.ConsoleBackground
 import com.example.ohana.ui.theme.ConsoleText
 import com.example.ohana.ui.theme.ConsoleTextBackground
@@ -42,6 +46,7 @@ import com.example.ohana.ui.theme.InterFont
 import com.example.ohana.ui.theme.MenuBlockBackground
 import com.example.ohana.ui.theme.RightMenuBackground
 import kotlinx.coroutines.CoroutineScope
+
 
 @Composable
 fun RightMenu(
@@ -52,6 +57,8 @@ fun RightMenu(
     val isControllersDropdownOpen = remember { mutableStateOf(false) }
     val isStreamsDropdownOpen = remember { mutableStateOf(false) }
     val isVariablesDropdownOpen = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
+
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
@@ -85,10 +92,18 @@ fun RightMenu(
                             }
 
                             if (isControllersDropdownOpen.value) {
-                                item { MenuItem(text = "    If", onClick = { blocks.add(IfBlock("")); blocks.add(EndBlock()) }) }
-                                item { MenuItem(text = "    While", onClick = {blocks.add(WhileBlock("")); blocks.add(
-                                    EndBlock()
-                                ) })  }
+                                item {
+                                    MenuItem(
+                                        text = "    If",
+                                        onClick = { blocks.add(IfBlock("")); blocks.add(EndBlock()) })
+                                }
+                                item {
+                                    MenuItem(text = "    While", onClick = {
+                                        blocks.add(WhileBlock("")); blocks.add(
+                                        EndBlock()
+                                    )
+                                    })
+                                }
                             }
                             item {
                                 MenuItem(
@@ -106,7 +121,7 @@ fun RightMenu(
                                 item {
                                     MenuItem(
                                         text = "    Print",
-                                        onClick = { blocks.add(PrintBlock(""))  })
+                                        onClick = { blocks.add(PrintBlock("")) })
                                 }
                             }
                             item {
@@ -135,6 +150,8 @@ fun RightMenu(
                                 }
                             }
                             item { MenuItem(text = "Clear", onClick = { blocks.clear() }) }
+                            item { MenuItem(text = "How to use", onClick = { showDialog.value = true })
+                            }
                         }
                     }
                 }
@@ -143,12 +160,18 @@ fun RightMenu(
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     BlocksDrawer(blocks)
                     OpenMenuButton(scope, drawerState)
+                    if (showDialog.value) {
+                        val activity = LocalContext.current as? Activity
+                        activity?.let {
+                            сreateDialog(it)
+                        }
+                        showDialog.value = false
+                    }
+
                 }
             }
         )
-
     }
-
 }
 
 @Composable
@@ -222,4 +245,18 @@ fun Console(logs: List<String>) {
             }
         }
     }
+}
+
+@Composable
+fun сreateDialog(activity: Activity?) {
+    val builder = AlertDialog.Builder(activity)
+    builder.setTitle("Привет!")
+        .setMessage("Мы очень старались над созданием этого приложения и хотим предупретить, что для корректного использования Вам стоит знать некоторые его особенности. \n\n1. Пожалуйста, при вводе математических выражений пишите все сиволы через пробел: \"a = b * 8\" \n\n2. При обращении к элементу массива конкретного индекста вводите \"arr[i]\", иначе \"arr[2_+_1]\"")
+        .setPositiveButton(
+            "Спасибо!"
+        ) { dialog, id ->
+            Toast.makeText(activity, "Приятного пользования!", Toast.LENGTH_SHORT).show()
+        }
+
+    builder.create().show()
 }

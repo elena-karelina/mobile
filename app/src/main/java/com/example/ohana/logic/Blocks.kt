@@ -1,7 +1,7 @@
 package com.example.ohana.logic
 
 open class Block {
-    open fun execute(scope: Scope) { }
+    open fun execute(scope: Scope) {}
     open var value1: String = ""
     open var value2: String = ""
 }
@@ -15,19 +15,19 @@ class Body {
     }
 }
 
-class SetVariableBlock(var name: String, var value: String): Block() {
+class SetVariableBlock(var name: String, var value: String) : Block() {
     override fun execute(scope: Scope) {
         scope.setVariable(name, solveMathExpression(scope, value))
     }
 }
 
-class SetArrBlock(var name: String, var size: String): Block() {
+class SetArrBlock(var name: String, var size: String) : Block() {
     override fun execute(scope: Scope) {
         scope.setArray(name, solveMathExpression(scope, size).toInt())
     }
 }
 
-class PrintBlock(var log: String): Block() {
+class PrintBlock(var log: String) : Block() {
     override fun execute(scope: Scope) {
         try {
             scope.setLog(solveMathExpression(scope, log).toString())
@@ -41,10 +41,10 @@ class PrintBlock(var log: String): Block() {
     }
 }
 
-class EndBlock(): Block(){
+class EndBlock() : Block() {
 }
 
-class IfBlock(var condition: String): Block() {
+class IfBlock(var condition: String) : Block() {
     var ifBody = Body()
 
     override fun execute(scope: Scope) {
@@ -57,7 +57,7 @@ class IfBlock(var condition: String): Block() {
     }
 }
 
-class WhileBlock(var condition: String): Block() {
+class WhileBlock(var condition: String) : Block() {
     var body = Body()
 
     override fun execute(scope: Scope) {

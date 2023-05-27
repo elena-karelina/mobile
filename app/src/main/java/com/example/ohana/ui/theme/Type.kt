@@ -12,7 +12,7 @@ import com.example.ohana.R
 val InterFont = FontFamily(
     Font(R.font.inter_light)
 )
-// Set of Material typography styles to start with
+
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = InterFont,
