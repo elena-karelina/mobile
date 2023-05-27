@@ -10,6 +10,6 @@ val variableBlockBackground = Color(red = 244, green = 162, blue = 97, alpha = 2
 val MainBackground = Color(red = 64, green = 61, blue = 57, alpha = 255)
 val RightMenuBackground = Color(red = 74, green = 71, blue = 68, alpha = 255)
 val MenuBlockBackground = Color(red = 79, green = 76, blue = 73, alpha = 255)
-val ConsoleBackground = Color(red = 74, green = 71, blue = 73, alpha = 255)
+val ConsoleBackground = Color(red = 79, green = 76, blue = 73, alpha = 255)
 val ConsoleTextBackground = Color(red = 74, green = 71, blue = 68, alpha = 255)
 val ConsoleText = Color(red = 179, green = 179, blue = 179, alpha = 255)
