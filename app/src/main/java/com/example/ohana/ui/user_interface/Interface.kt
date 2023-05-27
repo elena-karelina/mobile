@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,7 +34,13 @@ import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetArrBlock
 import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.logic.WhileBlock
-import com.example.ohana.logic.endBlock
+import com.example.ohana.logic.EndBlock
+import com.example.ohana.ui.theme.ConsoleBackground
+import com.example.ohana.ui.theme.ConsoleText
+import com.example.ohana.ui.theme.ConsoleTextBackground
+import com.example.ohana.ui.theme.InterFont
+import com.example.ohana.ui.theme.MenuBlockBackground
+import com.example.ohana.ui.theme.RightMenuBackground
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -53,7 +60,7 @@ fun RightMenu(
             drawerContent = {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     ModalDrawerSheet(
-                        drawerContainerColor = Color(0xFF4A4744),
+                        drawerContainerColor = RightMenuBackground,
                         modifier = Modifier.fillMaxWidth(0.6f)
                     ) {
                         LazyColumn(
@@ -65,21 +72,22 @@ fun RightMenu(
                             item {
                                 MenuItem(
                                     text = "Controllers",
+
                                     onClick = {
                                         isControllersDropdownOpen.value =
                                             !isControllersDropdownOpen.value
                                     },
-                                    menuItemBackgroundColor = if (isControllersDropdownOpen.value) Color(
-                                        0xFF4F4C49
-                                    ) else Color.Transparent,
+                                    menuItemBackgroundColor = if (isControllersDropdownOpen.value)
+                                        MenuBlockBackground
+                                    else Color.Transparent,
                                     isNested = false
                                 )
                             }
 
                             if (isControllersDropdownOpen.value) {
-                                item { MenuItem(text = "    if", onClick = { blocks.add(IfBlock("")); blocks.add(endBlock()) }) }
-                                item { MenuItem(text = "    while", onClick = {blocks.add(WhileBlock("")); blocks.add(
-                                    endBlock()
+                                item { MenuItem(text = "    If", onClick = { blocks.add(IfBlock("")); blocks.add(EndBlock()) }) }
+                                item { MenuItem(text = "    While", onClick = {blocks.add(WhileBlock("")); blocks.add(
+                                    EndBlock()
                                 ) })  }
                             }
                             item {
@@ -88,9 +96,9 @@ fun RightMenu(
                                     onClick = {
                                         isStreamsDropdownOpen.value = !isStreamsDropdownOpen.value
                                     },
-                                    menuItemBackgroundColor = if (isStreamsDropdownOpen.value) Color(
-                                        0xFF4F4C49
-                                    ) else Color.Transparent,
+                                    menuItemBackgroundColor = if (isStreamsDropdownOpen.value)
+                                        MenuBlockBackground
+                                    else Color.Transparent,
                                     isNested = false
                                 )
                             }
@@ -100,11 +108,6 @@ fun RightMenu(
                                         text = "    Print",
                                         onClick = { blocks.add(PrintBlock(""))  })
                                 }
-                                item {
-                                    MenuItem(
-                                        text = "    Input",
-                                        onClick = {  })
-                                }
                             }
                             item {
                                 MenuItem(
@@ -113,16 +116,16 @@ fun RightMenu(
                                         isVariablesDropdownOpen.value =
                                             !isVariablesDropdownOpen.value
                                     },
-                                    menuItemBackgroundColor = if (isVariablesDropdownOpen.value) Color(
-                                        0xFF4F4C49
-                                    ) else Color.Transparent,
+                                    menuItemBackgroundColor = if (isVariablesDropdownOpen.value)
+                                        MenuBlockBackground
+                                    else Color.Transparent,
                                     isNested = false
                                 )
                             }
                             if (isVariablesDropdownOpen.value) {
                                 item {
                                     MenuItem(
-                                        text = "    Set variable",
+                                        text = "    Assignment",
                                         onClick = { blocks.add(SetVariableBlock("", "")) })
                                 }
                                 item {
@@ -167,7 +170,9 @@ fun MenuItem(
         Text(
             text = text,
             fontSize = 20.sp,
-            color = Color.White
+            color = Color.White,
+            fontFamily = InterFont,
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -184,17 +189,19 @@ fun Console(logs: List<String>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(250.dp)
-                .background(Color(red = 74, green = 71, blue = 73, alpha = 255))
+                .background(ConsoleBackground)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(20.dp)
-                    .background(Color(red = 74, green = 71, blue = 68, alpha = 255))
+                    .background(ConsoleTextBackground)
             ) {
                 Text(
-                    "     console output",
-                    color = Color(red = 179, green = 179, blue = 179, alpha = 255)
+                    text = "     console output",
+                    fontFamily = InterFont,
+                    fontWeight = FontWeight.Bold,
+                    color = ConsoleText
                 )
             }
             LazyColumn(
@@ -205,8 +212,10 @@ fun Console(logs: List<String>) {
                 item {
                     logs.forEach() {
                         Text(
-                            "    >> " + it,
-                            color = Color(red = 179, green = 179, blue = 179, alpha = 255)
+                            text = "     >> $it",
+                            fontFamily = InterFont,
+                            fontWeight = FontWeight.Bold,
+                            color = ConsoleText
                         )
                     }
                 }

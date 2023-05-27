@@ -100,8 +100,8 @@ fun convertToRPN(scope: Scope, a: String, operators: Array<String>, getOperatorP
         else if (it == ")") {
             while (stack.last() != "(") {
                 result.add(stack.removeLast())
-                if (stack.size == 0) {// TODO
-                    return listOf("Error")
+                if (stack.size == 0) {
+                    throw Exception()
                 }
             }
             stack.removeLast()
@@ -129,38 +129,39 @@ fun solveMathExpression(scope: Scope, expression: String): Double {
                 "/" -> {
                     val b = stack.removeLast()
                     val a = stack.removeLast()
-                    stack.add(a / b) // TODO
+                    stack.add(a / b)
                 }
                 "-" ->  {
                     val b = stack.removeLast()
                     val a = stack.removeLast()
-                    stack.add(a - b) // TODO
+                    stack.add(a - b)
                 }
                 "//" ->  {
                     val b = stack.removeLast()
                     val a = stack.removeLast()
-                    stack.add((a.toInt() / b.toInt()).toDouble()) // TODO
+                    stack.add((a.toInt() / b.toInt()).toDouble())
                 }
                 "%" ->  {
                     val b = stack.removeLast()
                     val a = stack.removeLast()
-                    stack.add(a % b) // TODO
+                    stack.add(a % b)
                 }
                 "**" ->  {
                     val b = stack.removeLast()
                     val a = stack.removeLast()
-                    stack.add(pow(a, b.toInt())) // TODO
+                    stack.add(pow(a, b.toInt()))
                 }
-                else ->  {
+                else -> {
                     if (it.toDoubleOrNull() == null) {
                         if (scope.variables.containsKey(it)) {
                             stack.add(scope.variables[it]!!)
+                        } else if (it.matches(Regex("[a-z]*\\[.*\\]"))) {
+                            val item = it.replace("[", " ").replace("]", "").split(" ")
+                            stack.add(scope.arrays[item[0]]!![solveMathExpression(scope, item[1].replace("_", " ")).toInt()])
                         } else {
-                            scope.setLog("Invalid value: $it")
-                            // return "Exception" // TODO
+                            throw Exception()
                         }
-                    }
-                    else {
+                    } else {
                         stack.add(it.toDouble())
                     }
                 }
@@ -191,8 +192,7 @@ fun solveLogicalExpression(scope: Scope, expression: String): Any {
                         if (scope.variables.containsKey(it)) {
                             stack.add(scope.variables[it]!!)
                         } else {
-                            scope.setLog("Invalid value: $it")
-                            // return "Exception" // TODO
+                            throw Exception()
                         }
                     }
                     else {

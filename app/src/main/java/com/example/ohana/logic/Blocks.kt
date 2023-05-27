@@ -1,7 +1,5 @@
 package com.example.ohana.logic
 
-import java.util.UUID
-
 open class Block {
     open fun execute(scope: Scope) { }
     open var value1: String = ""
@@ -24,17 +22,30 @@ class SetVariableBlock(var name: String, var value: String): Block() {
 }
 
 class SetArrBlock(var name: String, var size: String): Block() {
-}
-class PrintBlock(var log: String): Block() {
     override fun execute(scope: Scope) {
-        scope.setLog(solveMathExpression(scope, log).toString())
+        scope.setArray(name, solveMathExpression(scope, size).toInt())
     }
 }
-class endBlock(): Block(){
+
+class PrintBlock(var log: String): Block() {
+    override fun execute(scope: Scope) {
+        try {
+            scope.setLog(solveMathExpression(scope, log).toString())
+        } catch (e: Exception) {
+            try {
+                scope.setLog(solveLogicalExpression(scope, log).toString())
+            } catch (e: Exception) {
+                scope.setLog(log)
+            }
+        }
+    }
+}
+
+class EndBlock(): Block(){
 }
 
 class IfBlock(var condition: String): Block() {
-    val ifBody = Body()
+    var ifBody = Body()
 
     override fun execute(scope: Scope) {
         if (solveLogicalExpression(scope, condition) == 1.0) {
@@ -42,29 +53,12 @@ class IfBlock(var condition: String): Block() {
                 it.execute(scope)
             }
         }
-    }
-}
-
-class IfElseBlock(val condition: String): Block() {
-    val ifBody = Body()
-    val elseBody = Body()
-
-    override fun execute(scope: Scope) {
-        if (solveLogicalExpression(scope, condition) == 1.0) {
-            ifBody._body.forEach {
-                it.execute(scope)
-            }
-        }
-        else {
-            elseBody._body.forEach {
-                it.execute(scope)
-            }
-        }
+        ifBody = Body()
     }
 }
 
 class WhileBlock(var condition: String): Block() {
-    val body = Body()
+    var body = Body()
 
     override fun execute(scope: Scope) {
         if (solveLogicalExpression(scope, condition) == 1.0) {
@@ -73,5 +67,6 @@ class WhileBlock(var condition: String): Block() {
             }
             this.execute(scope)
         }
+        body = Body()
     }
 }

@@ -1,7 +1,6 @@
 package com.example.ohana.ui.blocks
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -35,10 +34,15 @@ import androidx.compose.ui.unit.sp
 import com.example.ohana.logic.IfBlock
 import com.example.ohana.logic.PrintBlock
 import com.example.ohana.logic.SetArrBlock
-
 import com.example.ohana.logic.SetVariableBlock
 import com.example.ohana.logic.WhileBlock
+import com.example.ohana.ui.theme.controlerBlockBackground
+import com.example.ohana.ui.theme.printBlockBackground
+import com.example.ohana.ui.theme.variableBlockBackground
 
+val blockTextFontSize = 20.sp
+val blockPadding = 8.dp
+val fieldBackgroundTextColor = Color(0xFFA5A5A5)
 
 @Composable
 fun PrintBlock(block: PrintBlock, distance: Dp) {
@@ -46,22 +50,22 @@ fun PrintBlock(block: PrintBlock, distance: Dp) {
     val minWidth by remember { mutableStateOf(10.dp) }
     Box(modifier = Modifier.padding(start=distance)){
         Box(modifier = Modifier
-            .background(Color(0xFF8338EC), RoundedCornerShape(8.dp))
-            .padding(12.dp)
+            .background(printBlockBackground, RoundedCornerShape(8.dp))
+            .padding(blockPadding)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "print",
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = blockPadding),
                     color = Color.White,
-                    fontSize = 20.sp
+                    fontSize = blockTextFontSize
                 )
 
                 Box(modifier = Modifier
                     .background(Color.White, shape = RoundedCornerShape(8.dp))
-                    .padding(vertical = 8.dp, horizontal = 10.dp)
+                    .padding(vertical = blockPadding, horizontal = blockPadding)
                     .widthIn(min = minWidth)
                     .height(IntrinsicSize.Min)
                     .width(IntrinsicSize.Min)
@@ -77,7 +81,7 @@ fun PrintBlock(block: PrintBlock, distance: Dp) {
                         modifier = Modifier.fillMaxSize(),
                         singleLine = true,
                         maxLines = 1,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     )
                 }
             }
@@ -85,63 +89,19 @@ fun PrintBlock(block: PrintBlock, distance: Dp) {
     }
 }
 
-//@Composable
-//fun InputBlock(block: InputBlock, distance: Dp) {
-//    var value by remember(block.value1) { mutableStateOf(block.value1) }
-//    val minWidth by remember { mutableStateOf(10.dp) }
-//    Box(modifier = Modifier.padding(start=distance)){
-//        Box(modifier = Modifier
-//            .background(Color(0xFF8338EC), RoundedCornerShape(8.dp))
-//            .padding(12.dp)
-//        ) {
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//            ) {
-//                Text(
-//                    text = "input",
-//                    modifier = Modifier.padding(horizontal = 16.dp),
-//                    color = Color.White,
-//                    fontSize = 20.sp
-//                )
-//
-//                Box(modifier = Modifier
-//                    .background(Color.White, shape = RoundedCornerShape(8.dp))
-//                    .padding(vertical = 8.dp, horizontal = 10.dp)
-//                    .widthIn(min = minWidth)
-//                    .height(IntrinsicSize.Min)
-//                    .width(IntrinsicSize.Min)
-//                    .wrapContentHeight()
-//                ) {
-//                    BasicTextField(
-//                        value = value,
-//                        onValueChange = {
-//                            block.value1 = it
-//                            value = it
-//                            block.log = it
-//                        },
-//                        modifier = Modifier.fillMaxSize(),
-//                        singleLine = true,
-//                        maxLines = 1,
-//                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
 @Composable
 fun EndBlock(distance: Dp){
     Box(
         modifier = Modifier.padding(start = distance)){
         Box(
             modifier = Modifier
-                .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
-                .padding(horizontal = 24.dp, vertical = 5.dp)
+                .background(controlerBlockBackground, shape = RoundedCornerShape(8.dp))
+                .padding(blockPadding, vertical = blockPadding / 2)
         ){
             Text(
                 text = "end of block",
                 color = Color.White,
-                fontSize = 8.sp
+                fontSize = 10.sp
             )
         }
     }
@@ -155,23 +115,23 @@ fun IfBlock(block: IfBlock, distance: Dp) {
         modifier = Modifier.padding(start = distance)){
         Box(
             modifier = Modifier
-                .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
-                .padding(12.dp)
+                .background(controlerBlockBackground, shape = RoundedCornerShape(8.dp))
+                .padding(blockPadding)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "if",
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = blockPadding),
                     color = Color.White,
-                    fontSize = 20.sp
+                    fontSize = blockTextFontSize
                 )
 
                 Box(
                     modifier = Modifier
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
-                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                        .padding(vertical = blockPadding, horizontal = blockPadding)
                         .widthIn(min = minWidth)
                         .height(IntrinsicSize.Min)
                         .width(IntrinsicSize.Min)
@@ -179,7 +139,7 @@ fun IfBlock(block: IfBlock, distance: Dp) {
                 ) {
                     BasicTextField(
                         textStyle = TextStyle(
-                            color = if (value.isEmpty() && !isFocused) Color(0xFFA5A5A5) else Color.Black
+                            color = if (value.isEmpty() && !isFocused) fieldBackgroundTextColor else Color.Black
                         ),
                         value = if (value.isEmpty() && !isFocused) "condition" else value,
                         onValueChange = {
@@ -209,23 +169,23 @@ fun WhileBlock(block: WhileBlock, distance: Dp) {
         modifier = Modifier.padding(start = distance)){
         Box(
             modifier = Modifier
-                .background(Color(0xFFE76F51), shape = RoundedCornerShape(8.dp))
-                .padding(12.dp)
+                .background(controlerBlockBackground, shape = RoundedCornerShape(8.dp))
+                .padding(blockPadding)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "while",
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = blockPadding),
                     color = Color.White,
-                    fontSize = 20.sp
+                    fontSize = blockTextFontSize
                 )
 
                 Box(
                     modifier = Modifier
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
-                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                        .padding(vertical = blockPadding, horizontal = blockPadding)
                         .widthIn(min = minWidth)
                         .height(IntrinsicSize.Min)
                         .width(IntrinsicSize.Min)
@@ -233,7 +193,7 @@ fun WhileBlock(block: WhileBlock, distance: Dp) {
                 ) {
                     BasicTextField(
                         textStyle = TextStyle(
-                            color = if (value.isEmpty() && !isFocused) Color(0xFFA5A5A5) else Color.Black
+                            color = if (value.isEmpty() && !isFocused) fieldBackgroundTextColor else Color.Black
                         ),
                         value = if (value.isEmpty() && !isFocused) "condition" else value,
                         onValueChange = {
@@ -267,26 +227,26 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
         Box(
             modifier = Modifier
                 .wrapContentSize()
-                .background(Color(0xFF2A9D8F), shape = RoundedCornerShape(8.dp))
-                .padding(10.dp)
+                .background(variableBlockBackground, shape = RoundedCornerShape(8.dp))
+                .padding(blockPadding)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 BasicTextField(
                     textStyle = TextStyle(
-                        color = if (value1.isEmpty() && !isFocused1) Color(0xFFA5A5A5) else Color.Black
+                        color = if (value1.isEmpty() && !isFocused1) fieldBackgroundTextColor else Color.Black
                     ),
                     value = if (value1.isEmpty() && !isFocused1) "name" else value1,
                     onValueChange = { newValue ->
-                        value1 = newValue.replace(Regex("[^a-z]"), "")
+                        value1 = newValue
                         block.name = value1
                         block.value1 = value1
                     },
                     modifier = Modifier
                         .onFocusChanged { isFocused1 = it.isFocused }
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
-                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                        .padding(vertical = blockPadding, horizontal = blockPadding)
                         .height(IntrinsicSize.Min)
                         .width(IntrinsicSize.Min)
                         .widthIn(min = minWidth)
@@ -302,14 +262,14 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
 
                     Text(
                         text = "=",
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier.padding(horizontal = blockPadding),
                         color = Color.White,
-                        fontSize = 30.sp
+                        fontSize = blockTextFontSize
                     )
 
                     BasicTextField(
                         textStyle = TextStyle(
-                            color = if (value2.isEmpty() && !isFocused2) Color(0xFFA5A5A5) else Color.Black
+                            color = if (value2.isEmpty() && !isFocused2) fieldBackgroundTextColor else Color.Black
                         ),
                         value = if (value2.isEmpty() && !isFocused2) "value" else value2,
                         onValueChange = {
@@ -320,7 +280,7 @@ fun SetVariableBlock(block: SetVariableBlock, distance: Dp) {
                         modifier = Modifier
                             .onFocusChanged { isFocused2 = it.isFocused }
                             .background(Color.White, shape = RoundedCornerShape(8.dp))
-                            .padding(vertical = 8.dp, horizontal = 10.dp)
+                            .padding(vertical = blockPadding, horizontal = blockPadding)
                             .widthIn(min = minWidth)
                             .height(IntrinsicSize.Min)
                             .width(IntrinsicSize.Min)
@@ -348,7 +308,7 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
         Box(
             modifier = Modifier
                 .wrapContentSize()
-                .background(Color(0xFF2A9D8F), shape = RoundedCornerShape(8.dp))
+                .background(variableBlockBackground, shape = RoundedCornerShape(8.dp))
                 .padding(8.dp)
         ) {
             Row(
@@ -357,12 +317,12 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
                 Text(
                     text = "arr",
                     color = Color.White,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(end = 8.dp),
+                    fontSize = blockTextFontSize,
+                    modifier = Modifier.padding(end = blockPadding),
                 )
                 BasicTextField(
                     textStyle = TextStyle(
-                        color = if (value1.isEmpty() && !isFocused1) Color(0xFFA5A5A5) else Color.Black
+                        color = if (value1.isEmpty() && !isFocused1) fieldBackgroundTextColor else Color.Black
                     ),
                     value = if (value1.isEmpty() && !isFocused1) "name" else value1,
                     onValueChange = { newValue ->
@@ -373,7 +333,7 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
                     modifier = Modifier
                         .onFocusChanged { isFocused1 = it.isFocused }
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
-                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                        .padding(vertical = blockPadding, horizontal = blockPadding)
                         .height(IntrinsicSize.Min)
                         .width(IntrinsicSize.Min)
                         .widthIn(min = minWidth)
@@ -389,14 +349,14 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
 
                 Text(
                     text = " ",
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                    modifier = Modifier.padding(start = blockPadding, end = blockPadding),
                     color = Color.White,
-                    fontSize = 20.sp
+                    fontSize = blockTextFontSize
                 )
 
                 BasicTextField(
                     textStyle = TextStyle(
-                        color = if (value2.isEmpty() && !isFocused2) Color(0xFFA5A5A5) else Color.Black
+                        color = if (value2.isEmpty() && !isFocused2) fieldBackgroundTextColor else Color.Black
                     ),
                     value = if (value2.isEmpty() && !isFocused2) "size" else value2,
                     onValueChange = {
@@ -407,7 +367,7 @@ fun SetArrBlock(block: SetArrBlock, distance: Dp) {
                     modifier = Modifier
                         .onFocusChanged { isFocused2 = it.isFocused }
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
-                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                        .padding(vertical = blockPadding, horizontal = blockPadding)
                         .widthIn(min = minWidth)
                         .height(IntrinsicSize.Min)
                         .width(IntrinsicSize.Min)
