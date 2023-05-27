@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -68,7 +69,9 @@ fun RightMenu(
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     ModalDrawerSheet(
                         drawerContainerColor = RightMenuBackground,
-                        modifier = Modifier.fillMaxWidth(0.6f)
+                        modifier = Modifier
+                            .fillMaxWidth(0.6f)
+                            .fillMaxHeight()
                     ) {
                         LazyColumn(
                             verticalArrangement = Arrangement.Top,
@@ -95,7 +98,11 @@ fun RightMenu(
                                 item {
                                     MenuItem(
                                         text = "    If",
-                                        onClick = { blocks.add(IfBlock("")); blocks.add(EndBlock()) })
+                                        onClick = {
+                                            blocks.add(IfBlock("")); blocks.add(
+                                            EndBlock()
+                                        )
+                                        })
                                 }
                                 item {
                                     MenuItem(text = "    While", onClick = {
@@ -109,7 +116,8 @@ fun RightMenu(
                                 MenuItem(
                                     text = "Streams",
                                     onClick = {
-                                        isStreamsDropdownOpen.value = !isStreamsDropdownOpen.value
+                                        isStreamsDropdownOpen.value =
+                                            !isStreamsDropdownOpen.value
                                     },
                                     menuItemBackgroundColor = if (isStreamsDropdownOpen.value)
                                         MenuBlockBackground
@@ -150,10 +158,15 @@ fun RightMenu(
                                 }
                             }
                             item { MenuItem(text = "Clear", onClick = { blocks.clear() }) }
-                            item { MenuItem(text = "How to use", onClick = { showDialog.value = true })
+                            item {
+                                MenuItem(
+                                    text = "How to use",
+                                    onClick = { showDialog.value = true })
                             }
                         }
                     }
+
+
                 }
             },
             content = {

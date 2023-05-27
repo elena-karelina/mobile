@@ -3,7 +3,8 @@ package com.example.ohana.logic
 val MATH_OPERATORS = arrayOf("+", "-", "*", "/", "//", "%", "**")
 val LOGIC_OPERATORS = arrayOf("<", "<=", ">", ">=", "==", "!=", "&&", "||", "!")
 
-val getMathOperatorPriority = { operator: String, -> Int
+val getMathOperatorPriority = { operator: String ->
+    Int
     when (operator) {
         "(" -> 1
         "+" -> 2
@@ -17,7 +18,8 @@ val getMathOperatorPriority = { operator: String, -> Int
     }
 }
 
-val getLogicalOperatorPriority = { operator: String, -> Int
+val getLogicalOperatorPriority = { operator: String ->
+    Int
     when (operator) {
         "(" -> 1
         "||" -> 2
@@ -37,27 +39,35 @@ class LogicalOperators {
     fun or(a: Double, b: Double): Double {
         return if ((a == 1.0) || (b == 1.0)) 1.0 else 0.0
     }
+
     fun and(a: Double, b: Double): Double {
         return if ((a == 1.0) && (b == 1.0)) 1.0 else 0.0
     }
+
     fun nott(a: Double): Double {
         return if (a == 1.0) 0.0 else 1.0
     }
+
     fun more(a: Double, b: Double): Double {
         return if (a > b) 1.0 else 0.0
     }
+
     fun moreOrEqual(a: Double, b: Double): Double {
         return if (a >= b) 1.0 else 0.0
     }
+
     fun less(a: Double, b: Double): Double {
         return if (a < b) 1.0 else 0.0
     }
+
     fun lessOrEqual(a: Double, b: Double): Double {
         return if (a <= b) 1.0 else 0.0
     }
+
     fun equal(a: Double, b: Double): Double {
         return if (a == b) 1.0 else 0.0
     }
+
     fun notEqual(a: Double, b: Double): Double {
         return if (a != b) 1.0 else 0.0
     }
@@ -71,7 +81,12 @@ fun pow(value: Double, exponent: Int): Double {
     return result
 }
 
-fun convertToRPN(scope: Scope, a: String, operators: Array<String>, getOperatorPriority: (op: String) -> Int): List<String> {
+fun convertToRPN(
+    scope: Scope,
+    a: String,
+    operators: Array<String>,
+    getOperatorPriority: (op: String) -> Int
+): List<String> {
     val expression = a.split(" ")
     val result: MutableList<String> = mutableListOf()
     val stack: ArrayDeque<String> = ArrayDeque()
@@ -80,11 +95,9 @@ fun convertToRPN(scope: Scope, a: String, operators: Array<String>, getOperatorP
         if (it in operators) {
             if (stack.size == 0) {
                 stack.add(it)
-            }
-            else if (getOperatorPriority(stack.last()) < getOperatorPriority(it)) {
+            } else if (getOperatorPriority(stack.last()) < getOperatorPriority(it)) {
                 stack.add(it)
-            }
-            else {
+            } else {
                 while (stack.size != 0) {
                     if (getOperatorPriority(stack.last()) < getOperatorPriority(it)) {
                         break
@@ -93,11 +106,9 @@ fun convertToRPN(scope: Scope, a: String, operators: Array<String>, getOperatorP
                 }
                 stack.add(it)
             }
-        }
-        else if (it == "(") {
+        } else if (it == "(") {
             stack.add(it)
-        }
-        else if (it == ")") {
+        } else if (it == ")") {
             while (stack.last() != "(") {
                 result.add(stack.removeLast())
                 if (stack.size == 0) {
@@ -105,8 +116,7 @@ fun convertToRPN(scope: Scope, a: String, operators: Array<String>, getOperatorP
                 }
             }
             stack.removeLast()
-        }
-        else {
+        } else {
             result.add(it)
         }
     }
@@ -131,33 +141,43 @@ fun solveMathExpression(scope: Scope, expression: String): Double {
                     val a = stack.removeLast()
                     stack.add(a / b)
                 }
-                "-" ->  {
+
+                "-" -> {
                     val b = stack.removeLast()
                     val a = stack.removeLast()
                     stack.add(a - b)
                 }
-                "//" ->  {
+
+                "//" -> {
                     val b = stack.removeLast()
                     val a = stack.removeLast()
                     stack.add((a.toInt() / b.toInt()).toDouble())
                 }
-                "%" ->  {
+
+                "%" -> {
                     val b = stack.removeLast()
                     val a = stack.removeLast()
                     stack.add(a % b)
                 }
-                "**" ->  {
+
+                "**" -> {
                     val b = stack.removeLast()
                     val a = stack.removeLast()
                     stack.add(pow(a, b.toInt()))
                 }
+
                 else -> {
                     if (it.toDoubleOrNull() == null) {
                         if (scope.variables.containsKey(it)) {
                             stack.add(scope.variables[it]!!)
                         } else if (it.matches(Regex("[a-z]*\\[.*\\]"))) {
                             val item = it.replace("[", " ").replace("]", "").split(" ")
-                            stack.add(scope.arrays[item[0]]!![solveMathExpression(scope, item[1].replace("_", " ")).toInt()])
+                            stack.add(
+                                scope.arrays[item[0]]!![solveMathExpression(
+                                    scope,
+                                    item[1].replace("_", " ")
+                                ).toInt()]
+                            )
                         } else {
                             throw Exception()
                         }
@@ -182,20 +202,31 @@ fun solveLogicalExpression(scope: Scope, expression: String): Any {
                 "&&" -> stack.add(logicalOperators.and(stack.removeLast(), stack.removeLast()))
                 "<" -> stack.add(logicalOperators.more(stack.removeLast(), stack.removeLast()))
                 ">" -> stack.add(logicalOperators.less(stack.removeLast(), stack.removeLast()))
-                "<=" -> stack.add(logicalOperators.moreOrEqual(stack.removeLast(), stack.removeLast()))
-                ">=" -> stack.add(logicalOperators.lessOrEqual(stack.removeLast(), stack.removeLast()))
+                "<=" -> stack.add(
+                    logicalOperators.moreOrEqual(
+                        stack.removeLast(),
+                        stack.removeLast()
+                    )
+                )
+
+                ">=" -> stack.add(
+                    logicalOperators.lessOrEqual(
+                        stack.removeLast(),
+                        stack.removeLast()
+                    )
+                )
+
                 "==" -> stack.add(logicalOperators.equal(stack.removeLast(), stack.removeLast()))
                 "!=" -> stack.add(logicalOperators.notEqual(stack.removeLast(), stack.removeLast()))
                 "!" -> stack.add(logicalOperators.nott(stack.removeLast()))
-                else ->  {
+                else -> {
                     if (it.toDoubleOrNull() == null) {
                         if (scope.variables.containsKey(it)) {
                             stack.add(scope.variables[it]!!)
                         } else {
                             throw Exception()
                         }
-                    }
-                    else {
+                    } else {
                         stack.add(it.toDouble())
                     }
                 }

@@ -48,8 +48,9 @@ fun StopButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun OpenMenuButton(scope: CoroutineScope,
-                   drawerState: DrawerState
+fun OpenMenuButton(
+    scope: CoroutineScope,
+    drawerState: DrawerState
 ) {
     Button(
         onClick = { scope.launch { drawerState.open() } },
